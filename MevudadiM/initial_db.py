@@ -1,5 +1,4 @@
-from .extensions import db
-from .models import *
+from MevudadiM.models import *
 
 u = User(name="Asaf Haas", access_token="bla", refresh_token="Bla")
 
