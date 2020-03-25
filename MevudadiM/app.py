@@ -1,8 +1,9 @@
-from flask import Flask, request, render_template, make_response
+from flask import Blueprint, request, render_template, make_response
 
 import MevudadiM.zoom_user as zoom_user
 
-app = Flask(__name__, template_folder="./templates", static_folder="./static")
+
+app = Blueprint('app', __name__)
 
 users = []
 
@@ -57,9 +58,3 @@ def participant_joined():
 @app.route('/meeting_ended', methods=["POST"])
 def participant_joined():
     pass
-
-
-
-
-if __name__ == '__main__':
-    app.run()
