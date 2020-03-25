@@ -3,6 +3,7 @@ from base64 import b64encode
 import json
 
 REDIRECT_URI = "https://mevudadim.herokuapp.com/"
+REDIRECT_URI = "https://9a1e88be.ngrok.io/"
 
 ACCOUNT_CLIENT_APP_ID = "V3gUdgJnRTqkJZPHGyIczw"
 ACCOUNT_CLIENT_APP_SECRET = "I1ahJBhuGEr6DLHwMwCgJqf6tjuoGwKY"
@@ -50,15 +51,15 @@ class User(object):
         self._refresh_token = None
         self.get_user_access_token()
 
-        # self._account_id = None
-        # self.get_account_info()
-        #
+        self._account_id = None
+        self.account_info = self.get_account_info()
+
         # self.list_users()
         # self.create_meeting()
 
-        self.list_meetings()
-        meeting = self.create_meeting()
-        self.list_meetings()
+        # self.list_meetings()
+        # meeting = self.create_meeting()
+        # self.list_meetings()
 
     # Returns dictionary of auth headers
     def get_code_auth_headers(self):
@@ -113,9 +114,6 @@ class User(object):
         )
         data = res.json()
         print(data)
-
-        self._account_id = data["account_id"]
-
         return data
 
     def list_users(self):
@@ -184,5 +182,6 @@ class User(object):
     #     values = json.loads(res.text)
     #     print(values)
 
-
-user1 = User('QyAgxL5BNU_WK1hjw7TRJKTJOuZdHdN2A')
+if __name__ == "__main__":
+    user1 = User('YBV8qQfcZy_WK1hjw7TRJKTJOuZdHdN2A')
+    meeting = user1.create_meeting()
