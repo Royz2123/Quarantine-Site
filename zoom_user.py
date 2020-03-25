@@ -58,7 +58,7 @@ class User(object):
 
         self.list_meetings()
         meeting = self.create_meeting()
-        self.get_meeting_participants(meeting["id"])
+        self.list_meetings()
 
     # Returns dictionary of auth headers
     def get_code_auth_headers(self):
@@ -151,6 +151,9 @@ class User(object):
                 "join_before_host": "true",
                 "mute_open_entry": "false",
                 "watermark": "false",
+                "approval_type": "0",
+                "registration_type": "1",
+                "enforce_login": "true",
                 "audio": "both",
                 "auto_recording": "none",
             },
@@ -160,13 +163,13 @@ class User(object):
         print("\nCREATED MEETING:\t" + response.text)
         return json.loads(response.text)
 
-    def get_meeting_participants(self, meeting_id):
-        url = "https://api.zoom.us/v2/meetings/%s/registrants" % meeting_id
-        querystring = {"page_number": "1", "page_size": "30", "status": "approved"}
-        headers = self.get_token_auth_headers()
-        response = requests.request("GET", url, headers=headers, params=querystring)
-        print("\nMEETING PARTICIPANTS:\t" + response.text)
-        return json.loads(response.text)
+    # def get_meeting_participants(self, meeting_id):
+    #     url = "https://api.zoom.us/v2/meetings/%s/registrants" % meeting_id
+    #     querystring = {"page_number": "1", "page_size": "30", "status": "approved"}
+    #     headers = self.get_token_auth_headers()
+    #     response = requests.request("GET", url, headers=headers, params=querystring)
+    #     print("\nMEETING PARTICIPANTS:\t" + response.text)
+    #     return json.loads(response.text)
 
     # def create_meeting(self):
     #     res = requests.post(
@@ -182,4 +185,4 @@ class User(object):
     #     print(values)
 
 
-user1 = User('ozDozMjzjL_WK1hjw7TRJKTJOuZdHdN2A')
+user1 = User('QyAgxL5BNU_WK1hjw7TRJKTJOuZdHdN2A')
