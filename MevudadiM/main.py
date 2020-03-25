@@ -50,4 +50,11 @@ def enter_room():
 
 @main.route('/participant_joined', methods=["POST"])
 def participant_joined():
-    pass
+    u = User(name="Asaf Haas", access_token="bla", refresh_token="bla")
+    db.session.add(u)
+
+    db.session.commit()
+
+    print("Added USer test")
+
+    return "200 OK yes"
