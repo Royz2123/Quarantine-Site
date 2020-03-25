@@ -44,12 +44,14 @@ CREATE_MEETING_URL = 'https://api.zoom.us/v2/users/me/meetings'
 class User(object):
     # Every user starts with a code that we get after authorization
 
-    def __init__(self, code):
-        self._code = code
-
-        self._access_token = None
-        self._refresh_token = None
-        self.get_user_access_token()
+    def __init__(self, code=None, tokens=None):
+        if code is not None:
+            self._code = code
+            self.access_token = None
+            self.refresh_token = None
+            self.get_user_access_token()
+        else:
+            self.access_token, self._refresh_token = tokens
 
         self._account_id = None
         self.account_info = self.get_account_info()
@@ -72,7 +74,7 @@ class User(object):
 
     def get_token_auth_headers(self):
         return {
-            'authorization': 'Bearer %s' % self._access_token,
+            'authorization': 'Bearer %s' % self.access_token,
             'content-type': "application/json",
         }
 
@@ -89,8 +91,8 @@ class User(object):
         values = json.loads(res.text)
         print(values)
 
-        self._access_token = values["access_token"]
-        self._refresh_token = values["refresh_token"]
+        self.access_token = values["access_token"]
+        self.refresh_token = values["refresh_token"]
 
     def refresh_user_access_token(self):
         res = requests.post(
@@ -104,8 +106,8 @@ class User(object):
         values = json.loads(res.text)
         print(values)
 
-        self._access_token = values["access_token"]
-        self._refresh_token = values["refresh_token"]
+        self.access_token = values["access_token"]
+        self.refresh_token = values["refresh_token"]
 
     def get_account_info(self):
         res = requests.get(
