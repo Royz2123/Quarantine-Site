@@ -9,3 +9,7 @@ from .models import *
 @with_appcontext
 def create_tables():
     db.create_all()
+
+    u = User(name="Asaf Haas", access_token="bla", refresh_token="bla")
+    db.session.add(u)
+    db.session.commit()
