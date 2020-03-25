@@ -14,6 +14,7 @@ USER_AUTH_URL = (
 )
 GET_ACCESS_TOKEN_URL = "https://api.zoom.us/oauth/token"
 USER_INFO_URL = 'https://api.zoom.us/v2/users/me'
+CREATE_MEETING_URL = 'https://api.zoom.us/v2/users/me/meetings'
 
 
 
@@ -28,6 +29,7 @@ class User(object):
         self.get_user_access_token()
 
         self._user_info = self.get_user_info()
+        self.create_meeting()
 
     # Returns dictionary of auth headers
     def get_auth_headers(self):
@@ -79,4 +81,18 @@ class User(object):
         data = res.json()
         return data
 
-# user1 = User('3XvHN12EwC_WK1hjw7TRJKTJOuZdHdN2A')
+    def create_meeting(self):
+        res = requests.post(
+            url=GET_ACCESS_TOKEN_URL,
+            data={
+                "topic": "Test Meeting",
+                "type": 0,
+                "agenda": "We will have a nice meeting"
+            },
+            headers=self.get_auth_headers()
+        )
+        values = json.loads(res.text)
+        print(values)
+
+
+user1 = User('fms4ApdJ5J_WK1hjw7TRJKTJOuZdHdN2A')

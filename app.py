@@ -11,7 +11,8 @@ def hello():
 
     # check if this is a new user in the site, and if so add to the db of users
     if code is not None:
-        new_user = zoom_user.User(code=code)
+        # new_user = zoom_user.User(code=code)
+        new_user = None
 
     print(code)
     return render_template(
