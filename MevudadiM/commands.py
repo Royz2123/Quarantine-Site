@@ -15,3 +15,12 @@ def create_tables():
 @with_appcontext
 def drop_all_database():
     db.drop_all()
+
+
+@click.command(name='add_user')
+@with_appcontext
+def add_user():
+    u = User(name="Asaf", access_token="Blabla", refresh_token="Bla Bla")
+
+    db.session.add(u)
+    db.session.commit()
