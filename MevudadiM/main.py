@@ -7,6 +7,7 @@ main = Blueprint('main', __name__)
 
 users = []
 
+
 @main.route('/', methods=["GET"])
 def homepage():
     code = request.args.get("code")
