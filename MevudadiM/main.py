@@ -1,7 +1,8 @@
 from flask import Blueprint, request, render_template, make_response
 
 import MevudadiM.zoom_user as zoom_user
-
+from MevudadiM.extensions import db
+from MevudadiM.models import User, Room
 
 main = Blueprint('main', __name__)
 
@@ -38,7 +39,8 @@ def enter_room():
     username = request.cookies.get("username")
 
     # get user object from list / db
-    user_obj = [user for name, user in users if name == username][0]
+    user_obj = User.query.filter_by(name = username).all()[0]
+    # user_obj = [user for name, user in users if name == username][0]
     print("GOT USER %s" % str(user_obj))
 
     meeting = user_obj.create_meeting()
