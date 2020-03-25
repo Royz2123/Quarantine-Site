@@ -1,0 +1,44 @@
+{
+  'page_count': 1,
+  'page_number': 1,
+  'page_size': 30,
+  'total_records': 3,
+  'meetings': [
+    {
+      'uuid': '79Qe9iszTVKASTJVhdshCg==',
+      'id': 877887579,
+      'host_id': 'WK1hjw7TRJKTJOuZdHdN2A',
+      'topic': 'הרגלי מצוינות - חפש בהירות + התארגנות לסמסטר',
+      'type': 2,
+      'start_time': '2020-03-16T18:00:00Z',
+      'duration': 30,
+      'timezone': 'Asia/Jerusalem',
+      'created_at': '2020-03-16T12:58:18Z',
+      'join_url': 'https://us04web.zoom.us/j/877887579?pwd=U0UzU2tKUWtXK2NCaXRYeklFTWhWQT09'
+    },
+    {
+      'uuid': '29oYtd3OQh6axkPf5G0rWg==',
+      'id': 183218631,
+      'host_id': 'WK1hjw7TRJKTJOuZdHdN2A',
+      'topic': 'פ"א רועי - פלד',
+      'type': 2,
+      'start_time': '2020-03-18T16:00:00Z',
+      'duration': 45,
+      'timezone': 'Asia/Jerusalem',
+      'created_at': '2020-03-18T15:44:22Z',
+      'join_url': 'https://us04web.zoom.us/j/183218631?pwd=UFBlWHB1L25CbldPU0pLKzc5amY2Zz09'
+    },
+    {
+      'uuid': 'MGwdcegKT9yKRIMHKduQ+Q==',
+      'id': 231788819,
+      'host_id': 'WK1hjw7TRJKTJOuZdHdN2A',
+      'topic': 'פ"א זהר - פלד',
+      'type': 2,
+      'start_time': '2020-03-24T19:00:00Z',
+      'duration': 30,
+      'timezone': 'Asia/Jerusalem',
+      'created_at': '2020-03-21T23:41:04Z',
+      'join_url': 'https://us04web.zoom.us/j/231788819?pwd=ZnBnOGh1dkZVZFV2RzcvL21hTW1RQT09'
+    }
+  ]
+}
