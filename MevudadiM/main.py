@@ -3,11 +3,11 @@ from flask import Blueprint, request, render_template, make_response
 import MevudadiM.zoom_user as zoom_user
 
 
-app = Blueprint('app', __name__)
+main = Blueprint('main', __name__)
 
 users = []
 
-@app.route('/', methods=["GET"])
+@main.route('/', methods=["GET"])
 def homepage():
     code = request.args.get("code")
 
@@ -30,7 +30,7 @@ def homepage():
     return resp
 
 
-@app.route('/enter_room_first', methods=["POST", "GET"])
+@main.route('/enter_room_first', methods=["POST", "GET"])
 def enter_room():
     # TODO: Get room argument and store in database
 
@@ -45,16 +45,6 @@ def enter_room():
     return str(meeting)
 
 
-@app.route('/participant_joined', methods=["POST"])
-def participant_joined():
-    pass
-
-
-@app.route('/participant_left', methods=["POST"])
-def participant_joined():
-    pass
-
-
-@app.route('/meeting_ended', methods=["POST"])
+@main.route('/participant_joined', methods=["POST"])
 def participant_joined():
     pass
