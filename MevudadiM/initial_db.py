@@ -6,7 +6,7 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
-u = User(name="Asaf Haas", access_token="bla", refresh_token="Bla")
+u = Users(name="Asaf Haas", access_token="bla", refresh_token="Bla")
 
 db.session.add(u)
 db.session.commit()

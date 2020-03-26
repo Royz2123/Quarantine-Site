@@ -50,7 +50,7 @@ def enter_room():
 
     try:
         room_obj = Rooms(
-            room_id=request.args.get("room_id"),
+            room_name=request.args.get("room_id"),
             meeting_name=request.args.get("topic"),
             meeting_id=meeting["uuid"],
             floor=request.args.get("floor"),
@@ -60,7 +60,7 @@ def enter_room():
         db.commit()
         
     except Exception as e:
-        print("\nERROR, Overused the Create:\t" + str(meeting))
+        print("\nERROR, Overused the Create:\t" + str(e))
 
     return str(meeting)
 
