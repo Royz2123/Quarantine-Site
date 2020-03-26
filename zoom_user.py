@@ -1,9 +1,10 @@
 import requests
 from base64 import b64encode
 import json
+import datetime
 
 REDIRECT_URI = "https://mevudadim.herokuapp.com/"
-REDIRECT_URI = "https://9a1e88be.ngrok.io/"
+REDIRECT_URI = "http://4d735348.ngrok.io"
 
 ACCOUNT_CLIENT_APP_ID = "V3gUdgJnRTqkJZPHGyIczw"
 ACCOUNT_CLIENT_APP_SECRET = "I1ahJBhuGEr6DLHwMwCgJqf6tjuoGwKY"
@@ -44,12 +45,14 @@ CREATE_MEETING_URL = 'https://api.zoom.us/v2/users/me/meetings'
 class User(object):
     # Every user starts with a code that we get after authorization
 
-    def __init__(self, code):
-        self._code = code
-
-        self._access_token = None
-        self._refresh_token = None
-        self.get_user_access_token()
+    def __init__(self, code=None, tokens=None):
+        if tokens is None:
+            self._code = code
+            self.access_token = None
+            self.refresh_token = None
+            self.get_user_access_token()
+        else:
+            self.access_token, self._refresh_token = tokens
 
         self._account_id = None
         self.account_info = self.get_account_info()
@@ -72,7 +75,7 @@ class User(object):
 
     def get_token_auth_headers(self):
         return {
-            'authorization': 'Bearer %s' % self._access_token,
+            'authorization': 'Bearer %s' % self.access_token,
             'content-type': "application/json",
         }
 
@@ -89,8 +92,8 @@ class User(object):
         values = json.loads(res.text)
         print(values)
 
-        self._access_token = values["access_token"]
-        self._refresh_token = values["refresh_token"]
+        self.access_token = values["access_token"]
+        self.refresh_token = values["refresh_token"]
 
     def refresh_user_access_token(self):
         res = requests.post(
@@ -104,8 +107,8 @@ class User(object):
         values = json.loads(res.text)
         print(values)
 
-        self._access_token = values["access_token"]
-        self._refresh_token = values["refresh_token"]
+        self.access_token = values["access_token"]
+        self.refresh_token = values["refresh_token"]
 
     def get_account_info(self):
         res = requests.get(
@@ -134,7 +137,10 @@ class User(object):
         print("\nMEETINGS LIST:\t\t" + response.text)
         return json.loads(response.text)
 
-    def create_meeting(self, start_time='2020-03-26T19:00:00Z', name="נפגשים ונהנים"):
+    def create_meeting(self, name="נפגשים ונהנים"):
+        start_time = datetime.datetime.now()
+        start_time = start_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+
         url = "https://api.zoom.us/v2/users/me/meetings"
         querystring = {
             "topic": name,
@@ -147,6 +153,7 @@ class User(object):
                 "host_video": "true",
                 "participant_video": "true",
                 "join_before_host": "true",
+                "use_pmi": "true",
                 "mute_open_entry": "false",
                 "watermark": "false",
                 "approval_type": "0",
@@ -158,6 +165,10 @@ class User(object):
         }
         headers = self.get_token_auth_headers()
         response = requests.request("POST", url, headers=headers, data=json.dumps(querystring))
+
+        if response.status_code == 429:
+            return "TOO MANY REQUESTS:\n" + str(response.text) + str(response.headers)
+
         print("\nCREATED MEETING:\t" + response.text)
         return json.loads(response.text)
 
@@ -181,6 +192,7 @@ class User(object):
     #     )
     #     values = json.loads(res.text)
     #     print(values)
+
 
 if __name__ == "__main__":
     user1 = User('YBV8qQfcZy_WK1hjw7TRJKTJOuZdHdN2A')
