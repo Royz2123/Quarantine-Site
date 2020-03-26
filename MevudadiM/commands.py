@@ -20,7 +20,15 @@ def drop_all_database():
 @click.command(name='add_user')
 @with_appcontext
 def add_user():
-    u = User(name="Asaf", access_token="Blabla", refresh_token="Bla Bla")
+    u = Users(name="Asaf", access_token="Blabla", refresh_token="Bla Bla")
 
     db.session.add(u)
+    db.session.commit()
+
+@click.command(name='add_room')
+@with_appcontext
+def add_room():
+    r = Rooms(room_name="rr", floor=2, meeting_name="mm", participants="Blablabla", join_url="http://urlfine")
+
+    db.session.add(r)
     db.session.commit()
