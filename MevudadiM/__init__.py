@@ -1,8 +1,8 @@
 from flask import Flask
 
 from .commands import create_tables, drop_all_database, add_user, add_room
-from .extensions import db, login_manager
-from .main import main
+from .extensions import db
+from .main import main, debug
 
 
 def create_app(config_file='settings.py'):
@@ -13,6 +13,7 @@ def create_app(config_file='settings.py'):
     db.init_app(app)
 
     app.register_blueprint(main)
+    app.register_blueprint(debug)
 
     app.cli.add_command(create_tables)
     app.cli.add_command(drop_all_database)

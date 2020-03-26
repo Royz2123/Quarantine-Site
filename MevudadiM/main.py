@@ -5,6 +5,7 @@ import MevudadiM.zoom_user as zoom_user
 from MevudadiM.models import *
 
 main = Blueprint("main", __name__)
+debug = Blueprint("debug", __name__)
 
 
 @main.route('/', methods=["GET"])
@@ -117,5 +118,36 @@ def meeting_ended():
 
     d = Rooms.delete().where(Rooms.meeting_id == meeting_id)
     d.execute()
+    db.session.commit()
+    return "Finished"
+
+
+@debug.route('/debug_drop_db', methods=["GET"])
+def debug_drop_db():
+    db.drop_all()
+    return "Finished"
+
+
+@debug.route('/debug_create_db', methods=["GET"])
+def debug_create_db():
+    db.drop_all()
+    db.create_all()
+    return "Finished"
+
+
+@debug.route('/debug_add_user', methods=["GET"])
+def debug_add_user():
+    u = Users(name="Asaf", access_token="Blabla", refresh_token="Bla Bla")
+
+    db.session.add(u)
+    db.session.commit()
+    return "Finished"
+
+
+@debug.route('/debug_add_room', methods=["GET"])
+def debug_add_room():
+    r = Rooms(room_name="rr", floor=2, meeting_name="mm", participants="Blablabla", join_url="http://urlfine")
+
+    db.session.add(r)
     db.session.commit()
     return "Finished"
