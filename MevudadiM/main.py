@@ -42,7 +42,7 @@ def enter_room():
 
     username = request.cookies.get("username")
 
-    user_dict = Users.query.filter(name=username).first()
+    user_dict = Users.query.filter(Users.name == username).first()
     user_obj = zoom_user.User(tokens=(user_dict.access_token, user_dict.refresh_token))
     print("GOT USER %s" % str(user_obj))
 
@@ -73,7 +73,7 @@ def participant_joined():
 
     meeting_id = content["payload"]["object"]["uuid"]
 
-    possible_meetings = Rooms.query.filter(meeting_id=meeting_id).first()
+    possible_meetings = Rooms.query.filter(Rooms.meeting_id == meeting_id).first()
     print("\nPOSSIBLE MEETINGS:\t" + str(possible_meetings))
 
     if possible_meetings is not None:
@@ -94,7 +94,7 @@ def participant_left():
     meeting_id = content["payload"]["object"]["uuid"]
 
     # Search
-    possible_meetings = Rooms.query.filter(meeting_id=meeting_id).first()
+    possible_meetings = Rooms.query.filter(Rooms.meeting_id == meeting_id).first()
 
     if possible_meetings is not None:
         username = content["payload"]["object"]["participant"]["user_name"]
