@@ -2,18 +2,13 @@ from flask import Blueprint, request, render_template, make_response
 import json
 
 import MevudadiM.zoom_user as zoom_user
+from MevudadiM.models import *
 
 main = Blueprint("main", __name__)
-
-users = []
-rooms = []
 
 
 @main.route('/', methods=["GET"])
 def homepage():
-    global rooms
-    global users
-
     code = request.args.get("code")
 
     # TODO: Could be from cookie as well
@@ -26,11 +21,10 @@ def homepage():
                 new_user.account_info["first_name"],
                 new_user.account_info["last_name"],
             )
-            users.append({
-                "name": username,
-                "access_token": new_user.access_token,
-                "refresh_token": new_user.refresh_token,
-            })
+            new_user_db = Users(name=username, access_token=new_user.access_token, refresh_token=new_user.refresh_token)
+
+            db.session.add(new_user_db)
+            db.session.commit()
         except Exception as e:
             print("User probably already logged in: " + str(e))
 
@@ -45,28 +39,26 @@ def homepage():
 
 @main.route('/enter_room_first', methods=["POST", "GET"])
 def enter_room():
-    global rooms
-    global users
 
     username = request.cookies.get("username")
 
-    # get user object from list / db
-    user_dict = [user for user in users if user["name"] == username][0]
-    user_obj = zoom_user.User(tokens=(user_dict["access_token"], user_dict["refresh_token"]))
+    user_dict = Users.query.filter(name=username).first()
+    user_obj = zoom_user.User(tokens=(user_dict.access_token, user_dict.refresh_token))
     print("GOT USER %s" % str(user_obj))
 
     meeting = user_obj.create_meeting()
 
     try:
-        room_obj = {
-            "room_id": request.args.get("room_id"),
-            "meeting_name": request.args.get("topic"),
-            "meeting_id": meeting["uuid"],
-            "floor": request.args.get("floor"),
-            "join_url": meeting["join_url"],
-            "participants": [username]
-        }
-        rooms.append(room_obj)
+        room_obj = Rooms(
+            room_id=request.args.get("room_id"),
+            meeting_name=request.args.get("topic"),
+            meeting_id=meeting["uuid"],
+            floor=request.args.get("floor"),
+            join_url=meeting["join_url"],
+            participants=json.dumps([username]))
+        db.session.add(room_obj)
+        db.commit()
+        
     except Exception as e:
         print("\nERROR, Overused the Create:\t" + str(meeting))
 
@@ -75,29 +67,26 @@ def enter_room():
 
 @main.route('/participant_joined', methods=["POST"])
 def participant_joined():
-    global rooms
-    global users
 
     print("\nPARTICIPANT JOINED:\t" + str(request.data))
     content = json.loads(request.data)
 
     meeting_id = content["payload"]["object"]["uuid"]
 
-    # Search
-    possible_meetings = [room for room in rooms if room["meeting_id"] == meeting_id]
+    possible_meetings = Rooms.query.filter(meeting_id=meeting_id).first()
     print("\nPOSSIBLE MEETINGS:\t" + str(possible_meetings))
 
-    if len(possible_meetings) != 0:
+    if possible_meetings is not None:
         username = content["payload"]["object"]["participant"]["user_name"]
         # TODO: username to FIRST and LAST name
-        possible_meetings[0]["participants"].append(username)
+        possible_meetings.participants = json.dumps(json.loads(possible_meetings.participants) + [username])
+
+    db.session.commit()
     return "Finished"
 
 
 @main.route('/participant_left', methods=["POST"])
 def participant_left():
-    global rooms
-    global users
 
     print("\nPARTICIPANT LEFT:\t" + str(request.data))
     content = json.loads(request.data)
@@ -105,25 +94,28 @@ def participant_left():
     meeting_id = content["payload"]["object"]["uuid"]
 
     # Search
-    possible_meetings = [room for room in rooms if room["meeting_id"] == meeting_id]
+    possible_meetings = Rooms.query.filter(meeting_id=meeting_id).first()
 
-    if len(possible_meetings) != 0:
+    if possible_meetings is not None:
         username = content["payload"]["object"]["participant"]["user_name"]
         # TODO: username to FIRST and LAST name
-        possible_meetings[0]["participants"].remove(username)
+        tmp = json.loads(possible_meetings[0].participants)
+        tmp.remove(username)
+        possible_meetings[0].participants = json.dumps(tmp)
+
+    db.session.commit()
     return "Finished"
 
 
 @main.route('/meeting_ended', methods=["POST"])
 def meeting_ended():
-    global rooms
-    global users
 
     print("\nMEETING ENDED:\t" + str(request.data))
     content = json.loads(request.data)
 
     meeting_id = content["payload"]["object"]["uuid"]
 
-    # Search and remove all meetings that are not in the meeting id
-    rooms = [room for room in rooms if room["meeting_id"] != meeting_id]
+    d = Rooms.delete().where(Rooms.meeting_id == meeting_id)
+    d.execute()
+    db.session.commit()
     return "Finished"
