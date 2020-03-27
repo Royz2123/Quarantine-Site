@@ -10,11 +10,26 @@ debug = Blueprint("debug", __name__)
 
 @main.route('/', methods=["GET"])
 def homepage():
+    # get the user code
     code = request.args.get("code")
+    username = request.cookies.get("username")
 
-    # TODO: Could be from cookie as well
+    # check for cookie
+    if username is not None:
+        # continue if in database
+        user_dict = Users.query.filter(Users.name == username).first()
+
+        if user_dict is not None:
+            resp = make_response(render_template(
+                'index.html',
+                greeting="Welcome %s" % username,
+            ))
+            resp.set_cookie("username", username)
+
+            print("\n\nUSED COOKIE\n")
+            return resp
+
     # check if this is a new user in the site, and if so add to the db of users
-    username = "<Not logged in>"
     if code is not None:
         try:
             new_user = zoom_user.User(code=code)
@@ -23,24 +38,29 @@ def homepage():
                 new_user.account_info["last_name"],
             )
             new_user_db = Users(name=username, access_token=new_user.access_token, refresh_token=new_user.refresh_token)
-
             db.session.add(new_user_db)
             db.session.commit()
+
+            resp = make_response(render_template(
+                'index.html',
+                greeting="Welcome %s" % username,
+            ))
+            resp.set_cookie("username", username)
+
+            print("\n\nUSED CODE\n")
+            return resp
         except Exception as e:
             print("User probably already logged in: " + str(e))
 
     resp = make_response(render_template(
         'index.html',
-        greeting="Welcome %s" % username,
-        title="מחזור מ האגדי - דף הבית"
+        greeting="LOG IN",
     ))
-    resp.set_cookie("username", username)
     return resp
 
 
 @main.route('/enter_room_first', methods=["POST", "GET"])
 def enter_room():
-
     username = request.cookies.get("username")
 
     user_dict = Users.query.filter(Users.name == username).first()
@@ -49,12 +69,19 @@ def enter_room():
 
     meeting = user_obj.create_meeting()
 
+    floor_num = request.args.get("floor")
+    if floor_num is None:
+        floor_num = 2
+    else:
+        floor_num = int(floor_num)
+
     try:
         room_obj = Rooms(
-            room_name=request.args.get("room_id"),
+            room_id=request.args.get("room_id"),
+            room_name=request.args.get("room_name"),
             meeting_name=request.args.get("topic"),
-            meeting_id=meeting["uuid"],
-            floor=request.args.get("floor"),
+            meeting_id=meeting["pmi"],
+            floor=floor_num,
             join_url=meeting["join_url"],
             participants=json.dumps([username]))
         db.session.add(room_obj)
@@ -66,13 +93,38 @@ def enter_room():
     return str(meeting)
 
 
+@main.route('/update_floor', methods=["GET"])
+def update_floor():
+    floor_num = request.args.get("floor")
+    username = request.cookies.get("username")
+
+    if floor_num is None:
+        floor_num = 2
+    else:
+        floor_num = int(floor_num)
+
+    rooms = Rooms.query.filter(Rooms.floor == floor_num).all()
+    floor_rooms = [{
+        "room_id": room.room_id,
+        "room_name": room.room_name,
+        "link": room.join_url,
+        "participants_names": room.participants,
+        "meeting_name": room.meeting_name
+    } for room in rooms]
+    content = {
+        "username": username,
+        "rooms": floor_rooms
+    }
+    return json.dumps(content)
+
+
 @main.route('/participant_joined', methods=["POST"])
 def participant_joined():
 
     print("\nPARTICIPANT JOINED:\t" + str(request.data))
     content = json.loads(request.data)
 
-    meeting_id = content["payload"]["object"]["uuid"]
+    meeting_id = content["payload"]["object"]["id"]
 
     possible_meetings = Rooms.query.filter(Rooms.meeting_id == meeting_id).first()
     print("\nPOSSIBLE MEETINGS:\t" + str(possible_meetings))
@@ -92,17 +144,20 @@ def participant_left():
     print("\nPARTICIPANT LEFT:\t" + str(request.data))
     content = json.loads(request.data)
 
-    meeting_id = content["payload"]["object"]["uuid"]
+    meeting_id = content["payload"]["object"]["id"]
 
     # Search
     possible_meetings = Rooms.query.filter(Rooms.meeting_id == meeting_id).first()
 
     if possible_meetings is not None:
-        username = content["payload"]["object"]["participant"]["user_name"]
-        # TODO: username to FIRST and LAST name
-        tmp = json.loads(possible_meetings[0].participants)
-        tmp.remove(username)
-        possible_meetings[0].participants = json.dumps(tmp)
+        try:
+            username = content["payload"]["object"]["participant"]["user_name"]
+            # TODO: username to FIRST and LAST name
+            tmp = json.loads(possible_meetings[0].participants)
+            tmp.remove(username)
+            possible_meetings[0].participants = json.dumps(tmp)
+        except Exception as e:
+            print(e)
 
     db.session.commit()
     return "Finished"
@@ -110,11 +165,10 @@ def participant_left():
 
 @main.route('/meeting_ended', methods=["POST"])
 def meeting_ended():
-
     print("\nMEETING ENDED:\t" + str(request.data))
     content = json.loads(request.data)
 
-    meeting_id = content["payload"]["object"]["uuid"]
+    meeting_id = content["payload"]["object"]["id"]
 
     d = Rooms.delete().where(Rooms.meeting_id == meeting_id)
     d.execute()

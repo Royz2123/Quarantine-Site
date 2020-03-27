@@ -1,6 +1,6 @@
 import os
 
-lcl = False
+lcl = True
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 

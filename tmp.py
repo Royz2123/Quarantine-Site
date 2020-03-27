@@ -24,7 +24,9 @@ def homepage():
     # check for cookie
     if username is not None:
         # continue if in database
-        if len([user for user in users if user["name"] == username]):
+        user_dict = Users.query.filter(Users.name == username).first()
+
+        if user_dict is not None:
             resp = make_response(render_template(
                 'index.html',
                 greeting="Welcome %s" % username,
@@ -42,11 +44,9 @@ def homepage():
                 new_user.account_info["first_name"],
                 new_user.account_info["last_name"],
             )
-            users.append({
-                "name": username,
-                "access_token": new_user.access_token,
-                "refresh_token": new_user.refresh_token,
-            })
+            new_user_db = Users(name=username, access_token=new_user.access_token, refresh_token=new_user.refresh_token)
+            db.session.add(new_user_db)
+            db.session.commit()
 
             resp = make_response(render_template(
                 'index.html',

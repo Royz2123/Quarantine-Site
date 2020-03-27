@@ -4,7 +4,7 @@ import json
 import datetime
 
 REDIRECT_URI = "https://mevudadim.herokuapp.com/"
-REDIRECT_URI = "http://4d735348.ngrok.io"
+REDIRECT_URI = "http://c381b457.ngrok.io"
 
 # ACCOUNT_CLIENT_APP_ID = "V3gUdgJnRTqkJZPHGyIczw"
 # ACCOUNT_CLIENT_APP_SECRET = "I1ahJBhuGEr6DLHwMwCgJqf6tjuoGwKY"
@@ -22,8 +22,8 @@ USER_CLIENT_APP_SECRET_PROD = "hsnqJxcFCAjiRH2aIHLrVYHk4R9P61U1"
 # APP_LEVEL = USER_LEVEL
 #
 # if APP_LEVEL == USER_LEVEL:
-CLIENT_APP_ID = USER_CLIENT_APP_ID_PROD
-CLIENT_APP_SECRET = USER_CLIENT_APP_SECRET_PROD
+CLIENT_APP_ID = USER_CLIENT_APP_ID
+CLIENT_APP_SECRET = USER_CLIENT_APP_SECRET
 # else:
 #     CLIENT_APP_ID = ACCOUNT_CLIENT_APP_ID
 #     CLIENT_APP_SECRET = ACCOUNT_CLIENT_APP_SECRET
@@ -167,7 +167,8 @@ class User(object):
         response = requests.request("POST", url, headers=headers, data=json.dumps(querystring))
 
         if response.status_code == 429:
-            return "TOO MANY REQUESTS:\n" + str(response.text) + str(response.headers)
+            print("TOO MANY REQUESTS:\n" + str(response.text) + str(response.headers))
+            return json.loads(response.text)
 
         print("\nCREATED MEETING:\t" + response.text)
         return json.loads(response.text)
