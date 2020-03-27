@@ -3,33 +3,340 @@
 {% block title %}מחזור מ' האגדי - דף הבית{% endblock %}
 
 {% block body %}
-<div class="centered">
-    <h5>{{greeting}}</h5>
 
-    <section class="cards">
+<body>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+<!-- Google Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+<!-- Bootstrap core CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.14.1/css/mdb.min.css" rel="stylesheet">
 
-        <article class="card">
-            <a href="/update_floor?floor=2">
-                <h4>חדרי צ'אט</h4>
-            </a>
-        </article>
+<!-- JQuery -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.14.1/js/mdb.min.js"></script>
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<style>
+.tippy-box[data-theme~='light'] {
+  background-color: #f5f5f5;
+  color: black;
+}
 
-        <article class="card">
-            <a href="/client/volunteer">
-                <h4>MEMES</h4>
-            </a><!-- /card-one -->
+.tippy-box[data-theme~='light'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #f5f5f5;
+}
+.tippy-box[data-theme~='light'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: #f5f5f5;
+}
+.tippy-box[data-theme~='light'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #f5f5f5;
+}
+.tippy-box[data-theme~='light'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #f5f5f5;
+}
 
-        </article>
+</style>
 
-        <!-- /card-two -->
+<script>
+var selectedMap;
+let icons = {
 
-        <article class="card">
-            <a href="/enter_room_first?floor=2">
-                <h4>צור חדר צ'אט</h4>
-            </a>
-        </article>
-        <!-- /card-three -->
+}
+function putParticipants(roomId, participants) {
+    let finalHtml = `<ul class="list-group list-group-flush">`;
 
-    </section>
+    for (let i = 0; i < participants.length; i++) {
+        finalHtml += `<li class="list-group-item" style="padding-left:0; padding-right:0;">${participants[i]}</li>`;
+    }
+
+    finalHtml += "</ul>";
+    $(`#room-${roomId}-body`).html(finalHtml);
+}
+
+function putJoinLink(roomId, link) {
+    tippy(`#room-${roomId}-card`, {
+      content: `<center><h5>החדר פתוח</h5><hr>
+                <button type="button" class="btn btn-outline-primary" onclick="window.open('${link}')">הצטרף לחדר</button></center>`,
+      theme: 'light',
+      interactive: true,
+      allowHTML: true,
+    });
+}
+
+function putEmptyRoom(roomId, roomTitle) {
+    tippy(`#room-${roomId}-card`, {
+      content: `<center><h5>החדר ריק</h5><hr>
+                <button type="button" class="btn btn-outline-success" onclick="enterRoomFirst('${roomId}', '${roomTitle}')">צור שיחה</button></center>`,
+      theme: 'light',
+      interactive: true,
+      allowHTML: true,
+    });
+
+    $(`#room-${roomId}-body`).html(`<p class="card-text">חדר ריק</p>`);
+}
+
+function onFloorUpdate(meetingsData) {
+    meetingsData = JSON.parse(meetingsData);
+
+    console.log(meetingsData);
+    let me = meetingsData.username;
+    for (let i = 0; i < meetingsData.rooms.length; i++) {
+        let room = meetingsData.rooms[i];
+        if (room.participants_names.length > 0) {
+            putParticipants(room.room_id, JSON.parse(room.participants_names));
+            putJoinLink(room.room_id, room.link);
+        }
+
+        else {
+            putEmptyRoom(room.room_id, room.title);
+        }
+
+    }
+}
+
+
+function emptyAllRooms() {
+    for (let i = 0; i < selectedMap.length; i++) {
+        let row = selectedMap[i];
+
+        for (let j = 0; j < row.rooms.length; j++) {
+            putEmptyRoom(row.rooms[j].id, row.rooms[j].title);
+        }
+    }
+}
+
+function buildMapFromJson(mapJson) {
+    selectedMap = mapJson;
+    let finalHtml = "";
+
+    for (let i = 0; i < mapJson.length; i++) {
+        let row = mapJson[i];
+        finalHtml += `<div class="row justify-content-${row.align}">`;
+
+        for (let j = 0; j < row.rooms.length; j++) {
+            let room = row.rooms[j];
+            if (room.id === "space") {
+                finalHtml += `<div class="col-${room.size}"></div>`;
+                continue;
+
+            } else if (room.id === "passage") {
+                finalHtml += `<div class="col-2">
+                <div class="card" style="height: 100%;">
+                  <!-- Card content -->
+                  <div class="card-body" style="text-align: center">
+                  <i class="fas fa-angle-double-up fa-lg"></i>
+                  <hr>
+                  <i class="fas fa-angle-double-down fa-lg"></i>
+                  </div>
+                </div></div>`;
+                continue;
+            }
+
+            finalHtml += `<div class="col-${room.size}">
+                <div id="room-${room.id}-card" class="card" style="height: 100%;">
+                  <!-- Card content -->
+                  <div class="card-body" style="text-align: center">
+                    <!-- Title -->
+                    <h4 class="card-title">${room.title}</h4>
+                    <hr>
+                    <!-- Text -->
+                        <div id="room-${room.id}-body">
+                            <p class="card-text">חדר ריק</p>
+                        </div>
+                  </div>
+                </div>
+              </div>
+              `
+        }
+
+        finalHtml += `</div><br><br>`
+    }
+
+    return finalHtml;
+}
+var dData;
+function enterRoomFirst(roomId, roomTitle) {
+    $.post(`/enter_room_first`,
+        {
+            'room_id': roomId,
+            'room_name': roomTitle,
+            'topic': "",
+            "floor": "2",
+        },
+
+        function(data, status) {
+            data = data.split("\'").join("\"");
+            data = data.split("True").join("\"True\"");
+            data = data.split("False").join("\"False\"");
+            dData = data;
+            let jsonData = JSON.parse(data);
+            window.open(jsonData["start_url"]);
+        }
+
+    );
+}
+
+function requestFloorUpdate() {
+     $.get(`/update_floor?floor=2`,
+         function(data, status) {
+             emptyAllRooms();
+             onFloorUpdate(data);
+         }
+     );
+}
+
+let floor2map = [
+    {
+        "align": "start",
+        "rooms": [
+            {
+                "id": 205,
+                "title": "חדר 205",
+                "size": 2,
+            },
+
+            {
+                "id": 204,
+                "title": "חדר 204",
+                "size": 2,
+            },
+
+            {
+                "id": 203,
+                "title": "חדר 203",
+                "size": 2,
+            },
+
+            {
+                "id": 202,
+                "title": "חדר 202",
+                "size": 2,
+            },
+
+            {
+                "id": 201,
+                "title": "חדר 201",
+                "size": 2,
+            },
+
+            {
+                "id": 200,
+                "title": "חדר 200",
+                "size": 2,
+            },
+        ]},
+
+    {
+        "align": "end",
+        "rooms": [
+            {
+                "id": "passage",
+                "direction": "למטה"
+            },
+            {
+                "id": "space",
+                "size": 6,
+            },
+            {
+                "id": 220,
+                "title": "מועדון",
+                "size": 4,
+            },
+        ]
+    },
+
+    {
+        "align": "start",
+        "rooms": [
+            {
+                "id": 215,
+                "title": "חדר 215",
+                "size": 2,
+            },
+
+            {
+                "id": 214,
+                "title": "חדר 214",
+                "size": 2,
+            },
+
+            {
+                "id": 213,
+                "title": "חדר 213",
+                "size": 2,
+            },
+
+            {
+                "id": 212,
+                "title": "חדר 212",
+                "size": 2,
+            },
+
+            {
+                "id": 211,
+                "title": "חדר 211",
+                "size": 2,
+            },
+
+            {
+                "id": 210,
+                "title": "חדר 210",
+                "size": 2,
+            },
+        ]
+    }
+]
+
+
+</script>
+<br>
+<center><strong>
+    <h1>מתלם - קומה 2</h1>
+</strong></center>
+<br>
+<br>
+<div class="card" style="width: 90%; margin: auto">
+    <div class="card-body">
+        <div class="container">
+            <div id="floor-map">
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+         let exampleFloorUpdate = {
+             "user_name": "Ofek Zicher",
+             "rooms": [
+                 {
+                     "room_id": "204",
+                     "participants_names": ["Ofek Zicher", "Maya Naveh"],
+                     "link": "abc",
+                 },
+                 {
+                     "room_id": "205",
+                     "participants_names": ["Roy Zohar", "Asaf Haas", "Omer Prives"],
+                     "link": "abc",
+                 }
+             ]
+         }
+         $("#floor-map").html(buildMapFromJson(floor2map));
+
+         setTimeout(function(){emptyAllRooms();requestFloorUpdate();}, 500);
+         setInterval(function(){ requestFloorUpdate(); }, 4000);
+
+
+</script>
+
 {% endblock %}
+
+

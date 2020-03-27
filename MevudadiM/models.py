@@ -7,6 +7,9 @@ class Users(db.Model):
     access_token = db.Column(db.Text)
     refresh_token = db.Column(db.Text)
 
+    def __repr__(self):
+        return "USER OBJ: %s, %s..., %s...\n" % (self.name, self.access_token[:10], self.refresh_token[:10])
+
 
 class Rooms(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -18,3 +21,6 @@ class Rooms(db.Model):
     meeting_id = db.Column(db.String(200))
     participants = db.Column(db.Text)
     is_locked = db.Column(db.String(200))
+
+    def __repr__(self):
+        return "ROOM OBJ: %s%s%s\n" % (self.room_name, self.join_url, self.participants)
