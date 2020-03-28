@@ -2,7 +2,8 @@
 
 {% block title %}מחזור מ' האגדי - דף הבית{% endblock %}
 
-{% block stylesheet %}<link rel="stylesheet" href="/static/main.css">{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/main.css">{% endblock %}
 
 {% block body %}
 
@@ -72,6 +73,7 @@
 .tippy-box[data-theme~='light'][data-placement^='right'] > .tippy-arrow::before {
   border-right-color: #f5f5f5;
 }
+
 
 </style>
 
@@ -223,6 +225,86 @@ function requestFloorUpdate() {
      );
 }
 
+let floor1map = [
+    {
+        "align": "start",
+        "rooms": [
+            {
+                "id": 101,
+                "title": "חדר עבודה 101",
+                "size": 2,
+            },
+
+            {
+                "id": 102,
+                "title": "חדר עבודה 102",
+                "size": 2,
+            },
+
+            {
+                "id": 103,
+                "title": "חדר עבודה 103",
+                "size": 2,
+            },
+
+            {
+                "id": 104,
+                "title": "חדר עבודה 104",
+                "size": 2,
+            },
+
+            {
+                "id": 105,
+                "title": "חדר עבודה 105",
+                "size": 2,
+            },
+
+            {
+                "id": 106,
+                "title": "חדר עבודה 106",
+                "size": 2,
+            },
+        ]
+    },
+
+    {
+        "align": "start",
+        "rooms": [
+            {
+                "id": 120,
+                "title": "המשרד של אולשקר",
+                "size": 2,
+            },
+            {
+                "id": 121,
+                "title": "המשרד של דקל ",
+                "size": 2,
+            },
+            {
+                "id": 122,
+                "title": "המשרד של דוד ",
+                "size": 2,
+            },
+            {
+                "id": 123,
+                "title": "המשרד של גרינבוים ",
+                "size": 2,
+            },
+            {
+                "id": 124,
+                "title": "המשרד של גרנות ",
+                "size": 2,
+            },
+        ]
+    },
+
+
+
+
+]
+
+
+
 let floor2map = [
     {
         "align": "start",
@@ -326,6 +408,7 @@ let floor2map = [
 ]
 
 
+
 </script>
 <br>
 <center><strong>
@@ -358,10 +441,12 @@ let floor2map = [
                  }
              ]
          }
-         $("#floor-map").html(buildMapFromJson(floor2map));
+         let floormap = floor1map;
+         $("#floor-map").html(buildMapFromJson(floormap));
 
          setTimeout(function(){emptyAllRooms();requestFloorUpdate();}, 500);
          setInterval(function(){ requestFloorUpdate(); }, 4000);
+
 
 
 </script>
