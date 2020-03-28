@@ -293,3 +293,8 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return redirect(url_for('index'))
+
+
+@main.route('/videos')
+def get_videos():
+    return render_template('videos.html')
