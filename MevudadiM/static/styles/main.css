@@ -1,0 +1,218 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans&display=swap');
+
+body {
+    --nav-height: 130px;
+    background: rgb(19, 19, 19);
+    color: #fff;
+    font-family: 'Noto Sans', sans-serif;
+    user-select: none;
+}
+
+body::-webkit-scrollbar{
+    width: 0.25em;
+}
+body::-webkit-scrollbar-track{
+    background: rgba(2, 8, 90, 0.6);
+}
+body::-webkit-scrollbar-thumb{
+    background: rgb(0, 0, 200);
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #353535;
+    font-size: 3rem;
+    color: #fff;
+    box-shadow: rgba(3, 8, 20, 0.1) 0px 0.15rem 0.5rem, rgba(2, 8, 20, 0.1) 0px 0.075rem 0.175rem;
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    transition: all 500ms;
+    overflow: hidden;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    opacity: 0;
+}
+
+.card:hover {
+    box-shadow: rgba(2, 8, 20, 0.1) 0px 0.35em 1.175em, rgba(2, 8, 20, 0.08) 0px 0.175em 0.5em;
+    transform: translateY(-3px) scale(1.05);
+    z-index: 1;
+ }
+
+.basic-grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: var(--nav-height);
+
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-auto-rows: 300px;
+
+ }
+
+ @keyframes cardEntrece{
+     from{
+         opacity: 0;
+         filter: hue-rotate(180deg);
+     }
+     to{
+         opacity: 1;
+         filter: hue-rotate(0);
+     }
+ }
+
+ @media screen and (min-width: 580px) {
+    .tall {
+        grid-row: span 2 / auto;
+    }
+
+    .wide {
+        grid-column: span 2 / auto;
+    }
+}
+
+ .chosen {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(20, 20, 20, 0.7);
+    border-radius: 10%;
+    padding: 5rem;
+    z-index: 3;
+}
+
+#haveChosen{
+    opacity: 0;
+    display: none;
+    transition: opacity 450ms ease-in-out;
+    z-index: 2;
+
+}
+
+.chosenBg {
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    background-color: rgba(2, 8, 20, 0.6);
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+#chosenImage {
+    max-height: 30vw;
+}
+
+.btn-circle {
+    
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.428571429;
+    border-radius: 15px;
+  }
+.btn-circle:focus {outline:0;}
+.btn-circle.btn-lg {
+    width: 50px;
+    height: 50px;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.33;
+    border-radius: 25px;
+  }
+.btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    font-size: 24px;
+    line-height: 1.33;
+    border-radius: 35px;
+  }
+
+
+.navbar{
+    position: fixed;
+    top: 0%;
+    left:0;
+    right:0;
+    height: var(--nav-height);
+    background: rgb(19, 19, 19);
+    color: white;
+    z-index: 10;
+    box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+    
+}
+.navbar-nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 75px;
+}
+.navbar-item{
+    font-size: 6em;
+    list-style-type: none; 
+}
+
+
+#login{
+    background:rgb(243, 232, 232);
+    color:black;
+    text-align: center; 
+    position: fixed;
+    top: calc(var(--nav-height) - 30px);
+    right: 10%;
+    height: 15rem;
+    width: 20rem;
+    z-index: 11;;
+    border-radius: 15%;
+    border-top-right-radius: 0;
+    box-shadow: 0 0px 30px rgba(20, 0, 36, 0.678), inset 0px 0 10px rgba(22, 39, 185, 0.5);
+    transition: opacity 450ms ease-in-out;
+    opacity: 0;
+
+
+}
+
+.loginBg {
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    z-index: 4;
+}
+
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+.inputfile + label {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: white;
+    background-color:rgb(224, 72, 77);
+    display: inline-block;
+    padding: 10px;
+}
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color:rgb(173, 54, 58);
+
+}
+.inputfile + label {
+	cursor: pointer; /* "hand" cursor */
+}

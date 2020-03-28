@@ -71,6 +71,7 @@ input[type=submit] {
 .choice-box .list-group-item {
     width: 100%;
     height: 10vh;
+    background-color: rgba(0,0,0,0);
 }
 
 .max-container {
@@ -99,17 +100,6 @@ input[type=submit] {
     background-color: rgba(222, 26, 29, 0.36);
 }
 
-.list-group-item:nth-child(odd) {
-    background-color: rgba(255, 0, 0, 0.10);
-}
-
-.list-group-item:nth-child(even) {
-    background-color: rgba(255, 0, 0, 0.15);
-}
-
-.list-group-item:hover {
-    background-color: rgba(255, 0, 0, 0.40);
-}
 
 .scroll {
     max-height: calc(80vh - 40px);
@@ -129,7 +119,7 @@ nav {
 }
 
 .navbar {
-    background-color: rgba(155, 0, 11, 1);
+    background-color: rgba(155, 100, 255, 0.1);
 }
 
 
@@ -150,7 +140,7 @@ a:hover, a:visited, a:link, a:active
 }
 
 div.center {
-  text-align: center;
+  text-align: right;
 }
 
 .gflag{
@@ -194,7 +184,6 @@ h4 {
 
 .card:hover {
     border-radius: 20px;
-    background-color: rgba(255, 0, 0, 0.05);
 }
 
 @media screen and (min-width: 50em) {
@@ -211,10 +200,6 @@ h4 {
 
 ul {
     text-align: right;
-}
-
-div {
-    text-align: center;
 }
 
 

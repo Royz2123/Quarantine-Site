@@ -1,0 +1,71 @@
+{% extends "template.html" %}
+
+{% block title %}מחזור מ' האגדי - עמוד המימז{% endblock %}
+
+{% block stylesheet %} <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">{% endblock %}
+
+{% block body %}
+    <script src="{{ url_for('static', filename='scripts/func.js') }}" defer></script>
+
+    <!--<nav class="navbar">-->
+        <!--<ul class="navbar-nav">-->
+            <!--<li class="navbar-item" style="width: 100%;">-->
+                <!--<img src="-->
+                <!--{{ url_for('static', filename='icons/logo.png') }}-->
+                <!--" style="height: 50px;">-->
+                <!--&lt;!&ndash; <p> &ndash;&gt;-->
+                    <!--מי<b>מז</b>-->
+                <!--&lt;!&ndash; </p> &ndash;&gt;-->
+            <!--</li>-->
+            <!--<li class="navbar-item" style="width: 5%;">-->
+                <!--<button type="button" class="btn btn-info btn-circle btn-xl" onclick="toggleLogin()" style="background-image: url(-->
+                    <!--{{ url_for('static', filename='icons/upload.webp') }}-->
+                    <!--); background-size: cover;"></button>-->
+            <!--</li>-->
+
+        <!--</ul>-->
+        <!---->
+        <!---->
+    <!--</nav>-->
+    <br>
+
+ <button type="button" class="btn btn-info btn-circle btn-xl" onclick="toggleLogin()" style="background-image: url(
+                    {{ url_for('static', filename='icons/upload.webp') }}
+                    ); background-size: cover;"></button>
+
+    <section class="basic-grid">
+	{% for item in result %}
+    		<div class="card" id style="background-image: url(
+		{{ url_for('static', filename='memes/'+item) }}
+		);">
+	  </div>
+	{% endfor %}
+    </section>
+
+    <section id="haveChosen">
+        <div id="help" class="chosenBg"></div>
+        <div class="chosen">
+            <h1 id="imageTitle">כותרת תמונה</h1>
+            <img id="chosenImage" src="photos/f.jpg" draggable="false" />
+        </div>
+    </section>
+
+
+	<div id="help2" class="loginBg"  style="display: none;"></div>
+    <section id="login" style="display: none;">
+    <form id="myForm" method="post" enctype="multipart/form-data" action="/up">
+		<h1 style="font-size: 2em;">
+	            <b><u>
+	                upload new meme
+	            </u></b>    
+	        </h1>
+	        <br>
+	        <input onchange="document.getElementById('myForm').submit();" type="file" name="file" id="file" class="inputfile" />
+	        <label for="file">Choose a file<i><img src="
+	            {{ url_for('static', filename='icons/upload.png') }}
+	            " style="width: 1em; padding-right: 5px;"></i></label>
+	</form>
+    </section>
+{% endblock %}
+
+

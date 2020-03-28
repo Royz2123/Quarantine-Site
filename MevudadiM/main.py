@@ -231,3 +231,65 @@ def debug_add_room():
     db.session.add(r)
     db.session.commit()
     return "Finished"
+
+# Marketplace stuff
+
+@main.route('/policy', methods=["GET"])
+def policy():
+    return render_template(
+        "redirect.html",
+        redirect_url="https://www.privacypolicygenerator.info/live.php?token=QWyn09msrZjztzgZURJRstG44VF1yC24"
+    )
+
+@main.route('/terms', methods=["GET"])
+def terms():
+    return render_template(
+        "redirect.html",
+        redirect_url="https://www.termsfeed.com/terms-conditions/6127647aad9dd63af82a6e7de0b86b9e"
+    )
+
+
+
+
+# BLOG STUFF
+
+def get_images():
+    from os import listdir
+    from os.path import isfile, join
+    mypath = "Mevudadim/static/memes"
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    return onlyfiles
+
+
+@main.route('/memes')
+def get_memes():
+    return render_template('memes.html', result=get_images())
+
+
+@main.route('/up', methods=['GET', 'POST'])
+def upload_file():
+    import os
+    from werkzeug.utils import secure_filename
+    UPLOAD_FOLDER = 'Mevudadim/static/memes'
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+    main.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+    def allowed_file(filename):
+        return '.' in filename and \
+               filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return redirect(url_for('index'))

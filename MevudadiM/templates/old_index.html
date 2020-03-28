@@ -1,0 +1,35 @@
+{% extends "template.html" %}
+
+{% block title %}מחזור מ' האגדי - דף הבית{% endblock %}
+
+{% block body %}
+<div class="centered">
+    <h5>{{greeting}}</h5>
+
+    <section class="cards">
+
+        <article class="card">
+            <a href="/update_floor?floor=2">
+                <h4>חדרי צ'אט</h4>
+            </a>
+        </article>
+
+        <article class="card">
+            <a href="/client/volunteer">
+                <h4>MEMES</h4>
+            </a><!-- /card-one -->
+
+        </article>
+
+        <!-- /card-two -->
+
+        <article class="card">
+            <a href="/enter_room_first?floor=2">
+                <h4>צור חדר צ'אט</h4>
+            </a>
+        </article>
+        <!-- /card-three -->
+
+    </section>
+</div>
+{% endblock %}
