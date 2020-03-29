@@ -1,4 +1,5 @@
 from .extensions import db
+import datetime
 
 
 class Users(db.Model):
@@ -24,3 +25,12 @@ class Rooms(db.Model):
 
     def __repr__(self):
         return "ROOM OBJ: %s%s%s\n" % (self.room_name, self.join_url, self.participants)
+
+
+class Data(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    creator = db.Column(db.String(200))
+    service = db.Column(db.String(200))
+    text_data = db.Column(db.Text)
+    binary_data = db.Column(db.LargeBinary)
+    timestamp = db.Column(db.TIMESTAMP, default=datetime.datetime.now())

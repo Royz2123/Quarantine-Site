@@ -1,10 +1,11 @@
 from flask import Blueprint, request, render_template, make_response, redirect, url_for, flash
 import json
-import time
 
 import MevudadiM.zoom_user as zoom_user
 from MevudadiM.models import *
 
+
+SERVICE_MEMES = "SERVICE_MEMES"
 
 main = Blueprint("main", __name__)
 debug = Blueprint("debug", __name__)
@@ -272,12 +273,15 @@ def terms():
 # BLOG STUFF
 
 def get_images():
-    from os import listdir
-    from os.path import isfile, join
-    mypath = "Mevudadim/static/memes"
-    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-    return onlyfiles
+    result = [(str(x.id), x.creator) for x in Data.query.filter(Data.service == SERVICE_MEMES).all()]
+    print(result)
+    return result
 
+
+@main.route("/get_image", methods=["GET"])
+def get_image():
+    x = Data.query.filter(Data.id == int(request.args.get("pic"))).first()
+    return x.binary_data
 
 @main.route('/memes')
 def get_memes():
@@ -306,13 +310,13 @@ def upload_file():
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            filename = str(int(time.time()))
+            username = ""
             if request.cookies.get("username") is not None:
-                filename += "!!" + request.cookies.get("username")
-            filename += ".png"
-            # print ("filenamwe "+ file.filename)
-            # filename = secure_filename(file.filename)
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
+                username += "!!" + request.cookies.get("username")
+            d = Data(creator=username, service=SERVICE_MEMES, binary_data=file.read())
+
+            db.session.add(d)
+            db.session.commit()
         return redirect(url_for('main.get_memes'))
 
 

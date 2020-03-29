@@ -32,8 +32,8 @@
 
     <section class="basic-grid">
 	{% for item in result %}
-    		<div class="card" id style="background-image: url(
-		{{ url_for('static', filename='memes/'+item) }}
+    		<div class="card" id='{{ item[1] }}' style="background-image: url(
+		{{ url_for('main.get_image', pic=item[0]) }}
 		);">
 	  </div>
 	{% endfor %}
@@ -41,14 +41,14 @@
 
     <section id="haveChosen">
         <div id="help" class="chosenBg"></div>
-        <div class="chosen" dir="ltr">
+        <div class="chosen" dir="ltr" style="max-width:100vw;height:50vh;object-fit: contain;">
             <!-- <h1 id="imageTitle">כותרת תמונה</h1> -->
             <h3 id="imageByT" style="color:gray; display: inline;">By: </h3>
             <h3 id="imageBy" style="display: inline;"></h3>
             <br>
             <br>
             <br>
-            <img id="chosenImage" src="photos/f.jpg" draggable="false" />
+            <img id="chosenImage" src="photos/f.jpg" style="max-width:100vw;height:50vh;object-fit: contain;" draggable="false" />
         </div>
     </section>
 

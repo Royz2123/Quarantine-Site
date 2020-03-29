@@ -22,9 +22,8 @@ var cards = document.getElementsByClassName('card');
 for(var i = 0; i < cards.length; i++) {
 
     var card = cards[i];
-
     card.style.animation = "cardEntrece 1500ms ease-out "+(i+1)*150+"ms 1 normal forwards running";
-    console.log(card.style.animationDelay);
+    //console.log(card.style.animationDelay);
     
 
     card.onclick = function() {
@@ -32,22 +31,11 @@ for(var i = 0; i < cards.length; i++) {
         var card_image = card.style.backgroundImage;
         var card_image = card_image.substr(5, card_image.length-7);
         document.getElementById("chosenImage").src = card_image;
-        var myStr = card_image.split(".");
-        myStr.pop();
-        myStr = myStr.join();
-        myStr = myStr.replace("/static/memes/", "")
-        myStr = myStr.split("%20").join(" ");
-        myStr = myStr.split("%21").join("!");
-        var time = myStr
-        var by = ""
-        if (myStr.split("!!").length == 2){
-            time = myStr.split("!!")[0]
-            by = myStr.split("!!")[1]
-        }
+        var by = card.id;
         // document.getElementById("imageTitle").innerText = time;
         document.getElementById("imageBy").style.display = "none"
         document.getElementById("imageByT").style.display = "none"
-
+        console.log(by);
         if (by != ""){
             document.getElementById("imageBy").innerText = by;
             document.getElementById("imageBy").style.display = "inline"
