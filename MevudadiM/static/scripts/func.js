@@ -36,6 +36,7 @@ for(var i = 0; i < cards.length; i++) {
         myStr.pop();
         myStr = myStr.join();
         myStr = myStr.replace("/static/memes/", "")
+        myStr = myStr.replace("%20", " ")
         document.getElementById("imageTitle").innerText = myStr;
         document.getElementById("haveChosen").style.display = "block";
         setTimeout(function (){
