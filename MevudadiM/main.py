@@ -291,7 +291,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = str(int(time.time()))
             if request.cookies.get("username") is not None:
-                filename = request.cookies.get("username")
+                filename += "||" + request.cookies.get("username")
             filename += ".png"
             # print ("filenamwe "+ file.filename)
             # filename = secure_filename(file.filename)
