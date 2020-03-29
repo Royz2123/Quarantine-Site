@@ -36,8 +36,23 @@ for(var i = 0; i < cards.length; i++) {
         myStr.pop();
         myStr = myStr.join();
         myStr = myStr.replace("/static/memes/", "")
-        myStr = myStr.replace("%20", " ")
-        document.getElementById("imageTitle").innerText = myStr;
+        myStr = myStr.split("%20").join(" ");
+        myStr = myStr.split("%21").join("!");
+        var time = myStr
+        var by = ""
+        if (myStr.split("!!").length == 2){
+            time = myStr.split("!!")[0]
+            by = myStr.split("!!")[1]
+        }
+        document.getElementById("imageTitle").innerText = time;
+        document.getElementById("imageBy").style.display = "none"
+        document.getElementById("imageByT").style.display = "none"
+
+        if (by != ""){
+            document.getElementById("imageBy").innerText = by;
+            document.getElementById("imageBy").style.display = "inline"
+            document.getElementById("imageByT").style.display = "inline"
+        }
         document.getElementById("haveChosen").style.display = "block";
         setTimeout(function (){
             setTimeout(document.getElementById("haveChosen").style.opacity = 1, 1000);
