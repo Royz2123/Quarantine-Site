@@ -44,7 +44,7 @@ for(var i = 0; i < cards.length; i++) {
             time = myStr.split("!!")[0]
             by = myStr.split("!!")[1]
         }
-        document.getElementById("imageTitle").innerText = time;
+        // document.getElementById("imageTitle").innerText = time;
         document.getElementById("imageBy").style.display = "none"
         document.getElementById("imageByT").style.display = "none"
 
