@@ -130,7 +130,8 @@ def update_floor():
         "room_name": room.room_name,
         "link": room.join_url,
         "participants_names": room.participants,
-        "meeting_name": room.meeting_name
+        "topic": room.meeting_name,
+        "door_state": room.is_locked
     } for room in rooms]
     content = {
         "username": username,
@@ -203,6 +204,22 @@ def meeting_ended():
     return "Finished"
 
 
+@main.route('/change_door_state', methods=["POST"])
+def change_door_state():
+    content = json.loads(request.data)
+
+    room_id = content["payload"]["object"]["room_id"]
+    state = content["payload"]["object"]["door_state"]
+
+    curr_room = Rooms.query.filter(Rooms.room_id == room_id).first()
+    curr_room.is_locked = state
+
+    db.session.commit()
+    return "Finished"
+
+# Debug Stuff
+
+
 @debug.route('/debug_drop_db', methods=["GET"])
 def debug_drop_db():
     db.drop_all()
@@ -235,6 +252,7 @@ def debug_add_room():
 
 # Marketplace stuff
 
+
 @main.route('/policy', methods=["GET"])
 def policy():
     return render_template(
@@ -242,14 +260,13 @@ def policy():
         redirect_url="https://www.privacypolicygenerator.info/live.php?token=QWyn09msrZjztzgZURJRstG44VF1yC24"
     )
 
+
 @main.route('/terms', methods=["GET"])
 def terms():
     return render_template(
         "redirect.html",
         redirect_url="https://www.termsfeed.com/terms-conditions/6127647aad9dd63af82a6e7de0b86b9e"
     )
-
-
 
 
 # BLOG STUFF
