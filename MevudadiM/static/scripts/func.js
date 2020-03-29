@@ -7,7 +7,6 @@ document.getElementById("help").onclick = function(){
         document.getElementById("haveChosen").style.display = "none";
     }, 600); 
     document.getElementById("haveChosen").style.opacity = 0;
-    
 };
 
 document.getElementById("help2").onclick = function(){
@@ -16,7 +15,6 @@ document.getElementById("help2").onclick = function(){
     }, 500); 
     document.getElementById("login").style.opacity = 0;
     document.getElementById("help2").style.display = "none";
-
 };
 
 // set chosen onclick for all photos
@@ -34,6 +32,11 @@ for(var i = 0; i < cards.length; i++) {
         var card_image = card.style.backgroundImage;
         var card_image = card_image.substr(5, card_image.length-7);
         document.getElementById("chosenImage").src = card_image;
+        var myStr = card_image.split(".");
+        myStr.pop();
+        myStr = myStr.join();
+        myStr = myStr.replace("/static/memes/", "")
+        document.getElementById("imageTitle").innerText = myStr;
         document.getElementById("haveChosen").style.display = "block";
         setTimeout(function (){
             setTimeout(document.getElementById("haveChosen").style.opacity = 1, 1000);

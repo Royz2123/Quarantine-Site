@@ -1,5 +1,6 @@
-from flask import Blueprint, request, render_template, make_response
+from flask import Blueprint, request, render_template, make_response, redirect, url_for, flash
 import json
+import time
 
 import MevudadiM.zoom_user as zoom_user
 from MevudadiM.models import *
@@ -272,8 +273,6 @@ def upload_file():
     from werkzeug.utils import secure_filename
     UPLOAD_FOLDER = 'Mevudadim/static/memes'
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-    main.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
     def allowed_file(filename):
         return '.' in filename and \
                filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -290,9 +289,14 @@ def upload_file():
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return redirect(url_for('index'))
+            filename = str(int(time.time()))
+            if request.cookies.get("username") is not None:
+                filename = request.cookies.get("username")
+            filename += ".png"
+            # print ("filenamwe "+ file.filename)
+            # filename = secure_filename(file.filename)
+            file.save(os.path.join(UPLOAD_FOLDER, filename))
+        return redirect(url_for('main.get_memes'))
 
 
 @main.route('/videos')
