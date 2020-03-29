@@ -6,8 +6,8 @@ from base64 import b64encode
 import json
 import datetime
 
-REDIRECT_URI = "https://mevudadim.herokuapp.com/"
 REDIRECT_URI = "http://8ed23027.ngrok.io"
+REDIRECT_URI = "https://mevudadim.herokuapp.com/"
 
 # ACCOUNT_CLIENT_APP_ID = "V3gUdgJnRTqkJZPHGyIczw"
 # ACCOUNT_CLIENT_APP_SECRET = "I1ahJBhuGEr6DLHwMwCgJqf6tjuoGwKY"
