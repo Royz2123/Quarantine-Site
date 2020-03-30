@@ -82,42 +82,63 @@
 </style>
 
 <script>
-var selectedMap;
-let icons = {
 
-}
+
 function putParticipants(roomId, participants) {
-    let finalHtml = `<ul class="list-group list-group-flush">`;
+    let finalHtml = `<center><ul class="list-group list-group-flush" style="margin: auto;">`;
 
     for (let i = 0; i < participants.length; i++) {
-        finalHtml += `<li class="list-group-item" style="padding-left:0; padding-right:0;">${participants[i]}</li>`;
+        finalHtml += `<li class="list-group-item" style="padding-left:0; padding-right:0; margin: auto;">${participants[i]}</li>`;
     }
 
-    finalHtml += "</ul>";
+    finalHtml += "</ul></center>";
     $(`#room-${roomId}-body`).html(finalHtml);
 }
 
-function putJoinLink(roomId, link) {
-    tippy(`#room-${roomId}-card`, {
-      content: `<center><h5>החדר פתוח</h5><hr>
-                <button type="button" class="btn btn-outline-primary" onclick="window.open('${link}')">הצטרף לחדר</button></center>`,
-      theme: 'light',
-      interactive: true,
-      allowHTML: true,
-    });
+
+let tippies = {
+
 }
 
+function putJoinLink(roomId, link, topic) {
+    if (tippies[roomId] === undefined ) {
+        tippies[roomId] = tippy(`#room-${roomId}-card`, {
+          content: `<center><h5>החדר פתוח</h5><hr>
+                    <h6>נושא: "${topic}"</h6>
+                    <button type="button" class="btn btn-outline-primary" onclick="window.open('${link}')">הצטרף לחדר</button></center>`,
+          theme: 'light',
+          interactive: true,
+          allowHTML: true,
+        })[0];
+
+    } else {
+        tippies[roomId].setContent(`<center><h5>החדר פתוח</h5><hr>
+                  <h6>נושא: "${topic}"</h6>
+                  <button type="button" class="btn btn-outline-primary" onclick="window.open('${link}')">הצטרף לחדר</button></center>`);
+
+    }
+}
+
+
 function putEmptyRoom(roomId, roomTitle) {
-    tippy(`#room-${roomId}-card`, {
-      content: `<center><h5>החדר ריק</h5><hr>
-                <button type="button" class="btn btn-outline-success" onclick="enterRoomFirst('${roomId}', '${roomTitle}')">צור שיחה</button></center>`,
-      theme: 'light',
-      interactive: true,
-      allowHTML: true,
-    });
+    if (tippies[roomId] === undefined ) {
+        tippies[roomId] = tippy(`#room-${roomId}-card`, {
+          content: `<center><h5>החדר ריק</h5><hr>
+                    <input type="text" id="topic-room-${roomId}-${fetch}" class="form-control mb-4" placeholder="הזן נושא שיחה">
+                    <button type="button" class="btn btn-outline-success" onclick="enterRoomFirst('${roomId}', '${roomTitle}')">צור שיחה</button></center>`,
+          theme: 'light',
+          interactive: true,
+          allowHTML: true,
+        })[0];
+    } else {
+        tippies[roomId].setContent(`<center><h5>החדר ריק</h5><hr>
+                  <input type="text" id="topic-room-${roomId}-${fetch}" class="form-control mb-4" placeholder="הזן נושא שיחה">
+                  <button type="button" class="btn btn-outline-success" onclick="enterRoomFirst('${roomId}', '${roomTitle}')">צור שיחה</button></center>`);
+    }
 
     $(`#room-${roomId}-body`).html(`<p class="card-text">חדר ריק</p>`);
 }
+
 
 function onFloorUpdate(meetingsData) {
     meetingsData = JSON.parse(meetingsData);
@@ -128,7 +149,7 @@ function onFloorUpdate(meetingsData) {
         let room = meetingsData.rooms[i];
         if (room.participants_names.length > 0) {
             putParticipants(room.room_id, JSON.parse(room.participants_names));
-            putJoinLink(room.room_id, room.link);
+            putJoinLink(room.room_id, room.link, room.topic);
         }
 
         else {
@@ -140,8 +161,8 @@ function onFloorUpdate(meetingsData) {
 
 
 function emptyAllRooms() {
-    for (let i = 0; i < selectedMap.length; i++) {
-        let row = selectedMap[i];
+    for (let i = 0; i < floorMappings[selectedFloorName].length; i++) {
+        let row = floorMappings[selectedFloorName][i];
 
         for (let j = 0; j < row.rooms.length; j++) {
             putEmptyRoom(row.rooms[j].id, row.rooms[j].title);
@@ -149,13 +170,33 @@ function emptyAllRooms() {
     }
 }
 
+function redirectToFloor(floorName) {
+    let url = window.location.href;
+    if (url.indexOf('?') > -1){
+       url = url.split('?')[0] + "?floor=" + floorName;
+    }else{
+       url += '?floor=' + floorName
+    }
+    window.location.href = url;
+}
+
+
 function buildMapFromJson(mapJson) {
-    selectedMap = mapJson;
+    floorMappings[selectedFloorName] = mapJson;
     let finalHtml = "";
+    let titleSize = mapJson[0]["title-size"];
+    $("#map-title").html(mapJson[0]["map-name"]);
 
     for (let i = 0; i < mapJson.length; i++) {
         let row = mapJson[i];
-        finalHtml += `<div class="row justify-content-${row.align}">`;
+        if (row.direction !== undefined) {
+            finalHtml += `<div class="row justify-content-${row.align}" style="direction: ${row.direction};">`;
+        }
+
+        else {
+            finalHtml += `<div class="row justify-content-${row.align}">`;
+        }
+
 
         for (let j = 0; j < row.rooms.length; j++) {
             let room = row.rooms[j];
@@ -164,48 +205,61 @@ function buildMapFromJson(mapJson) {
                 continue;
 
             } else if (room.id === "passage") {
-                finalHtml += `<div class="col-2">
-                <div class="card" style="height: 100%;">
+                finalHtml += `
+                <div class="col-2">
+                <div class="card" style="height: 100%; margin: auto;">
                   <!-- Card content -->
-                  <div class="card-body" style="text-align: center">
-                  <i class="fas fa-angle-double-up fa-lg"></i>
+                  <div class="card-body" style="text-align: center; margin: auto;">
+                  <button type="button" class="btn btn-outline-secondary waves-effect" onclick="redirectToFloor('${room.up}')"><i class="fas fa-angle-double-up fa-lg"></i></button>
                   <hr>
-                  <i class="fas fa-angle-double-down fa-lg"></i>
+                  <button type="button" class="btn btn-outline-secondary waves-effect" onclick="redirectToFloor('${room.down}')"><i class="fas fa-angle-double-down fa-lg"></i></button>
                   </div>
-                </div></div>`;
+                </div>
+                </div>`;
                 continue;
             }
 
             finalHtml += `<div class="col-${room.size}">
                 <div id="room-${room.id}-card" class="card" style="height: 100%;">
                   <!-- Card content -->
-                  <div class="card-body" style="text-align: center">
+                  <div class="card-body" style="text-align: center; padding-right: 0; padding-left: 0;">
                     <!-- Title -->
-                    <h4 class="card-title">${room.title}</h4>
+                    <h${titleSize} class="card-title" style="font-weight: bold;">${room.title}</h${titleSize}>
                     <hr>
                     <!-- Text -->
+                    <center>
                         <div id="room-${room.id}-body">
                             <p class="card-text">חדר ריק</p>
                         </div>
+                    </center>
                   </div>
                 </div>
               </div>
-              `
+                  `
         }
 
-        finalHtml += `</div><br><br>`
+        if (row.double === undefined) {
+            finalHtml += `</div><br><br>`;
+        } else {
+            finalHtml += "</div><br>";
+        }
     }
 
     return finalHtml;
 }
+
+
 var dData;
+var selectedFloorName = "2";
+
+
 function enterRoomFirst(roomId, roomTitle) {
     $.post(`/enter_room_first`,
         {
             'room_id': roomId,
             'room_name': roomTitle,
-            'topic': "",
-            "floor": "2",
+            'topic': $(`#topic-room-${roomId}`).val(),
+            "floor": selectedFloorName,
         },
 
         function(data, status) {
@@ -220,53 +274,124 @@ function enterRoomFirst(roomId, roomTitle) {
     );
 }
 
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+
 function requestFloorUpdate() {
-     $.get(`/update_floor?floor=2`,
+     $.get(`/update_floor?floor=${selectedFloorName}`,
          function(data, status) {
              emptyAllRooms();
+             // onFloorUpdate(JSON.stringify(exampleFloorUpdate));
              onFloorUpdate(data);
          }
      );
 }
 
+function selectFloorName(floorName) {
+    selectedFloorName = floorName;
+    $("#floor-map").html(buildMapFromJson(floorMappings[selectedFloorName]));
+    emptyAllRooms();
+}
+
+
 let floor1map = [
     {
+        "map-name": "קומה 1",
         "align": "start",
+        "title-size": "6",
         "rooms": [
             {
                 "id": 101,
-                "title": "חדר עבודה 101",
+                "title": "חדר 101",
                 "size": 2,
             },
 
             {
                 "id": 102,
-                "title": "חדר עבודה 102",
+                "title": "חדר 102",
                 "size": 2,
             },
 
             {
                 "id": 103,
-                "title": "חדר עבודה 103",
+                "title": "חדר 103",
                 "size": 2,
             },
 
             {
                 "id": 104,
-                "title": "חדר עבודה 104",
+                "title": "חדר 104",
                 "size": 2,
             },
 
             {
                 "id": 105,
-                "title": "חדר עבודה 105",
+                "title": "חדר 105",
                 "size": 2,
             },
 
             {
                 "id": 106,
-                "title": "חדר עבודה 106",
+                "title": "חדר 106",
                 "size": 2,
+            },
+        ]
+    },
+
+    {
+        "align": "end",
+        "direction": "ltr",
+        "rooms": [
+            {
+                "id": "passage",
+                "down": "0",
+                "up": "2",
+            },
+            {
+                "id": "space",
+                "size": 10,
+            },
+        ]
+    },
+
+    {
+        "align": "start",
+        "double": true,
+        "rooms": [
+            {
+                "id": 121,
+                "title": "המשרד של איתי",
+                "size": 2,
+            },
+            {
+                "id": 123,
+                "title": "המשרד של בני",
+                "size": 2,
+            },
+            {
+                "id": 125,
+                "title": "המשרד של דקל ",
+                "size": 2,
+            },
+            {
+                "id": 127,
+                "title": "המשרד של ברקו ",
+                "size": 2,
+            },
+            {
+                "id": "space",
+                "size": "1",
+            },
+            {
+                "id": 129,
+                "title": "המשרד של גרנות ",
+                "size": 3,
             },
         ]
     },
@@ -275,43 +400,46 @@ let floor1map = [
         "align": "start",
         "rooms": [
             {
-                "id": 120,
-                "title": "המשרד של אולשקר",
-                "size": 2,
+                "id": "space",
+                "size": "2",
             },
-            {
-                "id": 121,
-                "title": "המשרד של דקל ",
-                "size": 2,
-            },
+
             {
                 "id": 122,
-                "title": "המשרד של דוד ",
-                "size": 2,
-            },
-            {
-                "id": 123,
-                "title": "המשרד של גרינבוים ",
+                "title": "המשרד של יוני",
                 "size": 2,
             },
             {
                 "id": 124,
-                "title": "המשרד של גרנות ",
+                "title": "המשרד של אולשקר",
                 "size": 2,
             },
+            {
+                "id": 126,
+                "title": "המשרד של דוד ",
+                "size": 2,
+            },
+            {
+                "id": "space",
+                "size": "1",
+            },
+            {
+                "id": 128,
+                "title": "המשרד של גרינבוים ",
+                "size": 3,
+            },
+
         ]
     },
-
-
-
-
 ]
 
 
 
 let floor2map = [
     {
+        "map-name": "קומה 2",
         "align": "start",
+        "title-size": "5",
         "rooms": [
             {
                 "id": 205,
@@ -352,10 +480,12 @@ let floor2map = [
 
     {
         "align": "end",
+        "direction": "ltr",
         "rooms": [
             {
                 "id": "passage",
-                "direction": "למטה"
+                "down": "1",
+                "up": "3",
             },
             {
                 "id": "space",
@@ -411,16 +541,22 @@ let floor2map = [
     }
 ]
 
+let floorMappings = {
+    "1": floor1map,
+    "2": floor2map
+}
 
 
 </script>
 <br>
 <center><strong>
-    <h1>מתלם - קומה 2</h1>
+    <h1>זומתל"ם</h1>
+    <h2 id="map-title"></h2>
+    <hr>
 </strong></center>
 <br>
 <br>
-<div class="card" style="width: 90%; margin: auto">
+<div class="card" style="width: 95%; margin: auto">
     <div class="card-body">
         <div class="container">
             <div id="floor-map">
@@ -435,19 +571,25 @@ let floor2map = [
              "rooms": [
                  {
                      "room_id": "204",
-                     "participants_names": ["Ofek Zicher", "Maya Naveh"],
+                     "topic": "יס פליז",
+                     "participants_names": `["Ofek Zicher", "Maya Naveh"]`,
                      "link": "abc",
                  },
                  {
                      "room_id": "205",
-                     "participants_names": ["Roy Zohar", "Asaf Haas", "Omer Prives"],
+                     "participants_names": `["Roy Zohar", "Asaf Haas", "Omer Prives"]`,
+                     "topic": "",
                      "link": "abc",
                  }
              ]
          }
-         let floormap = floor1map;
-         $("#floor-map").html(buildMapFromJson(floormap));
 
+         let floorToSelect = getUrlVars()["floor"];
+         if (floorToSelect === undefined) {
+             floorToSelect = "2";
+         }
+
+         selectFloorName(floorToSelect);
          setTimeout(function(){emptyAllRooms();requestFloorUpdate();}, 500);
          setInterval(function(){ requestFloorUpdate(); }, 4000);
 
@@ -456,5 +598,3 @@ let floor2map = [
 </script>
 
 {% endblock %}
-
-
