@@ -85,13 +85,13 @@
 
 
 function putParticipants(roomId, participants) {
-    let finalHtml = `<ul class="list-group list-group-flush">`;
+    let finalHtml = `<center><ul class="list-group list-group-flush" style="margin: auto;">`;
 
     for (let i = 0; i < participants.length; i++) {
-        finalHtml += `<li class="list-group-item" style="padding-left:0; padding-right:0;">${participants[i]}</li>`;
+        finalHtml += `<li class="list-group-item" style="padding-left:0; padding-right:0; margin: auto;">${participants[i]}</li>`;
     }
 
-    finalHtml += "</ul>";
+    finalHtml += "</ul></center>";
     $(`#room-${roomId}-body`).html(finalHtml);
 }
 
@@ -100,10 +100,11 @@ let tippies = {
 
 }
 
-function putJoinLink(roomId, link) {
+function putJoinLink(roomId, link, topic) {
     if (tippies[roomId] === undefined ) {
         tippies[roomId] = tippy(`#room-${roomId}-card`, {
           content: `<center><h5>החדר פתוח</h5><hr>
+                    <h6>נושא: "${topic}"</h6>
                     <button type="button" class="btn btn-outline-primary" onclick="window.open('${link}')">הצטרף לחדר</button></center>`,
           theme: 'light',
           interactive: true,
@@ -112,6 +113,7 @@ function putJoinLink(roomId, link) {
 
     } else {
         tippies[roomId].setContent(`<center><h5>החדר פתוח</h5><hr>
+                  <h6>נושא: "${topic}"</h6>
                   <button type="button" class="btn btn-outline-primary" onclick="window.open('${link}')">הצטרף לחדר</button></center>`);
 
     }
@@ -147,7 +149,7 @@ function onFloorUpdate(meetingsData) {
         let room = meetingsData.rooms[i];
         if (room.participants_names.length > 0) {
             putParticipants(room.room_id, JSON.parse(room.participants_names));
-            putJoinLink(room.room_id, room.link);
+            putJoinLink(room.room_id, room.link, room.topic);
         }
 
         else {
@@ -220,14 +222,16 @@ function buildMapFromJson(mapJson) {
             finalHtml += `<div class="col-${room.size}">
                 <div id="room-${room.id}-card" class="card" style="height: 100%;">
                   <!-- Card content -->
-                  <div class="card-body" style="text-align: center">
+                  <div class="card-body" style="text-align: center; padding-right: 0; padding-left: 0;">
                     <!-- Title -->
                     <h${titleSize} class="card-title" style="font-weight: bold;">${room.title}</h${titleSize}>
                     <hr>
                     <!-- Text -->
+                    <center>
                         <div id="room-${room.id}-body">
                             <p class="card-text">חדר ריק</p>
                         </div>
+                    </center>
                   </div>
                 </div>
               </div>
@@ -283,6 +287,7 @@ function requestFloorUpdate() {
      $.get(`/update_floor?floor=${selectedFloorName}`,
          function(data, status) {
              emptyAllRooms();
+             // onFloorUpdate(JSON.stringify(exampleFloorUpdate));
              onFloorUpdate(data);
          }
      );
@@ -551,7 +556,7 @@ let floorMappings = {
 </strong></center>
 <br>
 <br>
-<div class="card" style="width: 90%; margin: auto">
+<div class="card" style="width: 95%; margin: auto">
     <div class="card-body">
         <div class="container">
             <div id="floor-map">
@@ -566,12 +571,14 @@ let floorMappings = {
              "rooms": [
                  {
                      "room_id": "204",
-                     "participants_names": ["Ofek Zicher", "Maya Naveh"],
+                     "topic": "יס פליז",
+                     "participants_names": `["Ofek Zicher", "Maya Naveh"]`,
                      "link": "abc",
                  },
                  {
                      "room_id": "205",
-                     "participants_names": ["Roy Zohar", "Asaf Haas", "Omer Prives"],
+                     "participants_names": `["Roy Zohar", "Asaf Haas", "Omer Prives"]`,
+                     "topic": "",
                      "link": "abc",
                  }
              ]
