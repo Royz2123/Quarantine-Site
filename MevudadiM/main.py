@@ -194,6 +194,8 @@ def participant_left():
 
     meeting_id = content["payload"]["object"]["id"]
 
+    print("MEETING ID: ", meeting_id)
+
     # Search
     possible_meetings = Rooms.query.filter(Rooms.meeting_id == meeting_id).first()
 

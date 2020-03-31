@@ -124,7 +124,7 @@ function putEmptyRoom(roomId, roomTitle) {
     if (tippies[roomId] === undefined ) {
         tippies[roomId] = tippy(`#room-${roomId}-card`, {
           content: `<center><h5>החדר ריק</h5><hr>
-                    <input type="text" id="topic-room-${roomId}-${fetch}" class="form-control mb-4" placeholder="הזן נושא שיחה">
+                    <input type="text" id="topic-room-${roomId}" class="form-control mb-4" placeholder="הזן נושא שיחה">
                     <button type="button" class="btn btn-outline-success" onclick="enterRoomFirst('${roomId}', '${roomTitle}')">צור שיחה</button></center>`,
           theme: 'light',
           interactive: true,
@@ -132,7 +132,7 @@ function putEmptyRoom(roomId, roomTitle) {
         })[0];
     } else {
         tippies[roomId].setContent(`<center><h5>החדר ריק</h5><hr>
-                  <input type="text" id="topic-room-${roomId}-${fetch}" class="form-control mb-4" placeholder="הזן נושא שיחה">
+                  <input type="text" id="topic-room-${roomId}" class="form-control mb-4" placeholder="הזן נושא שיחה">
                   <button type="button" class="btn btn-outline-success" onclick="enterRoomFirst('${roomId}', '${roomTitle}')">צור שיחה</button></center>`);
     }
 
@@ -254,6 +254,7 @@ var selectedFloorName = "2";
 
 
 function enterRoomFirst(roomId, roomTitle) {
+    $(`#topic-room-${roomId}`).val();
     $.post(`/enter_room_first`,
         {
             'room_id': roomId,
