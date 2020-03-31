@@ -45,6 +45,24 @@ LIST_MEETINGS_URL = 'https://api.zoom.us/v2/users/me/meetings'
 CREATE_MEETING_URL = 'https://api.zoom.us/v2/users/me/meetings'
 
 
+def refresh_user_access_token(user):
+    res = requests.post(
+        url=GET_ACCESS_TOKEN_URL,
+        data={
+            "grant_type": 'refresh_token',
+            "refresh_token": REDIRECT_URI
+        },
+        headers={
+            'authorization': 'Bearer %s' % user.access_token,
+            'content-type': "application/json",
+        }
+    )
+    values = json.loads(res.text)
+    # print(values)
+
+    user.access_token = values["access_token"]
+    user.refresh_token = values["refresh_token"]
+
 class User(object):
     # Every user starts with a code that we get after authorization
 
