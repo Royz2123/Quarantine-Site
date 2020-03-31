@@ -24,7 +24,7 @@ class Rooms(db.Model):
     is_locked = db.Column(db.String(200))
 
     def __repr__(self):
-        return "ROOM OBJ: %s%s%s\n" % (self.room_name, self.join_url, self.participants)
+        return "ROOM OBJ: %s, %s, %s, %s, %s\n" % (self.room_name, self.meeting_id, self.meeting_name, self.join_url, self.participants)
 
 
 class Data(db.Model):
