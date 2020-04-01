@@ -1,36 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מימז</title>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">
-    <script src="{{ url_for('static', filename='scripts/func.js') }}" defer></script>
-</head>
-<body dir="rtl">
-    <nav class="navbar">
-        <ul class="navbar-nav">
-            <li class="navbar-item">
-                <img class="logoimage" src="
-                {{ url_for('static', filename='icons/logo.png') }}
-                " style="height: 50px;">
-                <!-- <p> -->
-                    מי<b style="color:rgb(140, 228, 255)">מז</b>
-                <!-- </p> -->
-            </li>
-            <li class="navbar-item" style="margin-right: auto;padding-left: 30px;">
-                <button type="button" class="btn btn-info btn-circle btn-xl" onclick="toggleLogin()" style="background-image: url(
-                    {{ url_for('static', filename='icons/upload.webp') }}
-                    ); background-size: cover;"></button>
-            </li>
+{% extends "template.html" %}
 
-        </ul>
-        
-        
-    </nav>
+{% block title %}מחזור מ' האגדי - דף הבית{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/main.css">
+<link rel="stylesheet" href="/static/styles/main.css">
+<script src="{{ url_for('static', filename='scripts/func.js') }}" defer></script>
+{% endblock %}
+
+{% block body %}
     <br>
-
-    <section class="meme-grid">
+    <hr>
+    <br>
+    <button type="button" class="btn btn-info btn-circle btn-xl" data-toggle="modal" data-target="#exampleModal" style="background-image: url(
+        {{ url_for('static', filename='icons/upload.webp') }}
+        ); background-size: cover;"></button>
+        <br><br><hr><br>
+    <section class="basic-grid">
 	{% for item in result %}
     		<div class="card" id='{{ item[1] }}' style="background-image: url(
 		{{ url_for('main.get_image', pic=item[0]) }}
@@ -41,33 +27,47 @@
 
     <section id="haveChosen">
         <div id="help" class="chosenBg"></div>
-        <div class="chosen" dir="ltr" style="max-width:100vw;height:50vh;object-fit: contain;">
+        <div class="chosen" dir="ltr" style="max-width:100vw;height:70vh;object-fit: contain;">
             <!-- <h1 id="imageTitle">כותרת תמונה</h1> -->
             <h3 id="imageByT" style="color:gray; display: inline;">By: </h3>
-            <h3 id="imageBy" style="display: inline;"></h3>
-            <br>
-            <br>
-            <br>
+            <h3 id="imageBy" style="display: inline; color: white;"></h3>
             <img id="chosenImage" src="photos/f.jpg" style="max-width:100vw;height:50vh;object-fit: contain;" draggable="false" />
         </div>
     </section>
 
 
 	<div id="help2" class="loginBg" style="display: none;"></div>
-    <section id="login" style="display: none;">
-    <form id="myForm" method="post" enctype="multipart/form-data" action="/up">
-		<h1 style="font-size: 2em;">
-	            <b><u>
-	                upload new meme
-	            </u></b>    
-	        </h1>
-	        <br>
-	        <input onchange="document.getElementById('myForm').submit();" type="file" name="file" id="file" class="inputfile" />
-	        <label for="file"">Choose a file<i><img src="
-	            {{ url_for('static', filename='icons/upload.png') }}
-	            " style="width: 1em; padding-right: 5px;"></i></label>
-	</form>
-    </section>
-</body>
-</html>
 
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Upload Meme</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <form id="myForm" method="post" enctype="multipart/form-data" action="/up">
+          		<h1 style="font-size: 2em;">
+          	            <b><u>
+          	                upload new meme
+          	            </u></b>
+          	        </h1>
+          	        <br>
+          	        <input onchange="document.getElementById('myForm').submit();" type="file" name="file" id="file" class="inputfile" />
+          	        <label for="file">Choose a file<i><img src="
+          	            {{ url_for('static', filename='icons/upload.png') }}
+          	            " style="width: 1em; padding-right: 5px;"></i></label>
+          	</form>
+
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
