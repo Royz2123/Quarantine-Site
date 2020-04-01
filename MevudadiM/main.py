@@ -1,10 +1,14 @@
-from flask import Blueprint, request, render_template, make_response, redirect, url_for, flash
+from flask import Blueprint, request, render_template, make_response, redirect, url_for, flash, current_app
+from apscheduler.schedulers.background import BackgroundScheduler
+
 import json
 import os
 
 import MevudadiM.zoom_user as zoom_user
 from MevudadiM.models import *
 
+
+MINUTES_BETWEEN_REFRESH_TOKENS = 1
 
 SERVICE_MEMES = "SERVICE_MEMES"
 
@@ -17,6 +21,24 @@ def debug_func():
     print("Users: ", Users.query.all(), "\n")
     print("Rooms: ", Rooms.query.all(), "\n")
 
+
+def job_refresh_tokens(app):
+    with app.app_context():
+        all_users = Users.query.all()
+        for user in all_users:
+            zoom_user.refresh_user_access_token(user)
+
+        db.session.commit()
+
+    print("refreshed_tokens!")
+
+
+@main.before_app_first_request
+def initialize_app():
+    apsched = BackgroundScheduler()
+    apsched.start()
+
+    apsched.add_job(job_refresh_tokens, 'interval', args=[current_app._get_current_object()], minutes=MINUTES_BETWEEN_REFRESH_TOKENS)
 
 @main.route('/', methods=["GET"])
 def homepage():
@@ -329,7 +351,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             username = ""
             if request.cookies.get("username") is not None:
-                username += "!!" + request.cookies.get("username")
+                username += request.cookies.get("username")
             d = Data(creator=username, service=SERVICE_MEMES, binary_data=file.read())
 
             db.session.add(d)
