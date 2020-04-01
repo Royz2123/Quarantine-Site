@@ -2,11 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>סרטוני חדרים</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מימז</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/main.css') }}">
+    <script src="{{ url_for('static', filename='scripts/func.js') }}" defer></script>
 </head>
-<body>
+<body dir="rtl">
 
-    <iframe src="https://drive.google.com/file/d/1O2udJjYnJ-mIYMaA-tZZoGDYDShKRXjO/preview" width="640" height="480"></iframe>
+<section class="video-grid">
+    {% for item in result %}
+    <div class="card" id="{{item[1]}}">
+        <p class="header" style="display: inline;">{{item[1]}}</p>
+        <iframe class="video-lmnt" src="{{item[0]}}"
+                allowfullscreen="true"
+                webkitallowfullscreen="true"
+                mozallowfullscreen="true"
+        ></iframe>
+    </div>
+    {% endfor %}
+</section>
 
+<section id="haveChosen">
+    <div id="help" class="chosenBg"></div>
+</section>
+
+
+<div id="help2" class="loginBg" style="display: none;"></div>
+<section id="login" style="display: none;">
+    <form id="myForm" method="post" enctype="multipart/form-data" action="/up">
+        <h1 style="font-size: 2em;">
+            <b><u>
+                upload new meme
+            </u></b>
+        </h1>
+        <br>
+        <input onchange="document.getElementById('myForm').submit();" type="file" name="file" id="file"
+               class="inputfile"/>
+        <label for="file"">Choose a file<i><img src="
+	            {{ url_for('static', filename='icons/upload.png') }}
+	            " style="width: 1em; padding-right: 5px;"></i></label>
+    </form>
+</section>
 </body>
 </html>
