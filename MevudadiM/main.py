@@ -121,7 +121,7 @@ def enter_room():
             room_id=request.form.get("room_id"),
             room_name=request.form.get("room_name"),
             meeting_name=request.form.get("topic"),
-            meeting_id=meeting["pmi"],
+            meeting_id=meeting["id"],
             floor=floor_num,
             join_url=meeting["join_url"],
             participants=json.dumps([]))
