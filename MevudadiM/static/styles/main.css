@@ -89,7 +89,7 @@
     transform: translate(-50%, -50%);
     background-color: rgba(20, 20, 20, 0.7);
     border-radius: 10%;
-    padding: 5rem;
+    padding: 2vw;
     z-index: 3;
 }
 
