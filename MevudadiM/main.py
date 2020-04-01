@@ -8,7 +8,7 @@ import MevudadiM.zoom_user as zoom_user
 from MevudadiM.models import *
 
 
-MINUTES_BETWEEN_REFRESH_TOKENS = 1
+MINUTES_BETWEEN_REFRESH_TOKENS = 20
 
 SERVICE_MEMES = "SERVICE_MEMES"
 
@@ -364,7 +364,7 @@ def countDir(path):
       # ^ this idiom means "we won't be using this value"
         files += len(filenames)
         folders += len(dirnames)
-    return folders,files
+    return folders, files
 
 
 
@@ -378,10 +378,10 @@ def blog():
     # return render_template('blog.html', episodes = episodes)
 
 def blogHelper():
-    num_of_episodes = countDir('./Mevudadim/static/prosak')[0]
+    num_of_episodes = countDir('Mevudadim/static/prosak')[0]
     print("EPISODES", num_of_episodes)
     episodes = []
-    for i in range(1,num_of_episodes+1):
+    for i in range(1, num_of_episodes+1):
         j = num_of_episodes+1-i
         episodes.append({'episodeNum':(j),'srcs':srcsHelper(j)})
     return episodes
