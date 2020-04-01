@@ -26,14 +26,12 @@ ul {
 
 }
 
-
 body {
     font-family: "Alef Hebrew",
     "Helvetica Neue",
     Helvetica,
     Arial,
     sans-serif;
-    background-color: rgba(0, 0, 0, 0.05);
 }
 
 body * {
@@ -120,6 +118,8 @@ nav {
 
 .navbar {
     background-color: rgba(155, 100, 255, 0.1);
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+
 }
 
 
@@ -201,10 +201,3 @@ h4 {
 ul {
     text-align: right;
 }
-
-
-
-
-
-
-

@@ -1,23 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans&display=swap');
 
-body {
-    --nav-height: 130px;
-    background: rgb(19, 19, 19);
-    color: #fff;
-    font-family: 'Noto Sans', sans-serif;
-    user-select: none;
-}
-
-body::-webkit-scrollbar{
-    width: 0.25em;
-}
-body::-webkit-scrollbar-track{
-    background: rgba(2, 8, 90, 0.6);
-}
-body::-webkit-scrollbar-thumb{
-    background: rgb(0, 0, 200);
-}
-
 .card {
     display: flex;
     flex-direction: column;
@@ -49,7 +31,6 @@ body::-webkit-scrollbar-thumb{
 .basic-grid {
     display: grid;
     gap: 1rem;
-    margin-top: var(--nav-height);
     --squre-size: min(30vh, 20vw);
     grid-template-columns: repeat(auto-fill, minmax(var(--squre-size), 1fr));
     grid-auto-rows: var(--squre-size);
@@ -116,7 +97,7 @@ body::-webkit-scrollbar-thumb{
 }
 
 .btn-circle {
-    
+
     width: 30px;
     height: 30px;
     text-align: center;
@@ -147,37 +128,14 @@ body::-webkit-scrollbar-thumb{
     font-family: myFirstFont;
     src: url(my.woff);
 }
-.navbar{
-    font-family: myFirstFont;
-    position: fixed;
-    top: 0%;
-    width: 100vw;
-    left:0;
-    right:0;
-    height: var(--nav-height);
-    background: rgb(19, 19, 19);
-    color: white;
-    z-index: 10;
-    box-shadow: 0 20px 30px rgba(0,0,0,0.5);
-    
-}
-.navbar-nav{
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-}
-.navbar-item{
-    font-size: 5em;
-    list-style-type: none; 
-}
+
 
 
 #login{
     background:rgb(243, 232, 232);
     color:black;
-    text-align: center; 
+    text-align: center;
     position: fixed;
-    top: calc(var(--nav-height) - 30px);
     left: 5%;
     height: 15rem;
     width: 20rem;
@@ -228,11 +186,7 @@ body::-webkit-scrollbar-thumb{
 
 
 @media screen and (max-width: 580px) {
-    .navbar{
-        transform: scale(0.5) translate(50%, -52%);
-        margin-top: 0px;
 
-    }
 
     .basic-grid{
         margin-top: 0px;
