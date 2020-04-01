@@ -50,11 +50,13 @@ def refresh_user_access_token(user):
         url=GET_ACCESS_TOKEN_URL,
         data={
             "grant_type": 'refresh_token',
-            "refresh_token": REDIRECT_URI
+            "refresh_token": user.refresh_token
         },
         headers={
-            'authorization': 'Bearer %s' % user.access_token,
-            'content-type': "application/json",
+            "Authorization": b"Basic " + b64encode(("%s:%s" % (
+                CLIENT_APP_ID,
+                CLIENT_APP_SECRET
+            )).encode())
         }
     )
     values = json.loads(res.text)
@@ -62,6 +64,7 @@ def refresh_user_access_token(user):
 
     user.access_token = values["access_token"]
     user.refresh_token = values["refresh_token"]
+
 
 class User(object):
     # Every user starts with a code that we get after authorization
