@@ -378,7 +378,8 @@ def blog():
     # return render_template('blog.html', episodes = episodes)
 
 def blogHelper():
-    num_of_episodes = countDir('Mevudadim/static/prosak')[0]
+    print(os.getcwd())
+    num_of_episodes = countDir('/app/Mevudadim/static/prosak')[0]
     print("EPISODES", num_of_episodes)
     episodes = []
     for i in range(1, num_of_episodes+1):
@@ -390,7 +391,7 @@ def blogHelper():
 def srcsHelper(num):
     numToWords = {1:'a',2:'b',3:'c',4:'d',5:'e',6:'f'}
     srcs = []
-    num_of_srcs = countDir('./Mevudadim/static/prosak/ep'+str(num))[1]
+    num_of_srcs = countDir('/app/Mevudadim/static/prosak/ep'+str(num))[1]
     for i in range(1,num_of_srcs+1):
         srcs.append({'source':'static/prosak/ep'+str(num)+'/'+numToWords[i]+'.png'})
     print(srcs)
