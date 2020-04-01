@@ -58,7 +58,7 @@ def refresh_user_access_token(user):
         }
     )
     values = json.loads(res.text)
-    # print(values)
+    print(values)
 
     user.access_token = values["access_token"]
     user.refresh_token = values["refresh_token"]
