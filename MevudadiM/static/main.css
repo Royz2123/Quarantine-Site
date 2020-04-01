@@ -28,7 +28,7 @@ ul {
 
 
 .blog-post {
-    width: 60vw;
+    width: 80vw;
     padding: 20px;
     border-radius: 5vw;
 }
@@ -48,7 +48,7 @@ body * {
 }
 
 form {
-    align : center
+    align : center;
     text-align: center;
 }
 

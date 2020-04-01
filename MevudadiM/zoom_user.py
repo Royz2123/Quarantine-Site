@@ -177,7 +177,7 @@ class User(object):
                 "host_video": "true",
                 "participant_video": "true",
                 "join_before_host": "true",
-                "use_pmi": "true",
+                "use_pmi": "false",
                 "mute_open_entry": "false",
                 "watermark": "false",
                 "approval_type": "0",
