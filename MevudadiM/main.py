@@ -7,6 +7,7 @@ import os
 import MevudadiM.zoom_user as zoom_user
 from MevudadiM.models import *
 
+dbg = False
 
 MINUTES_BETWEEN_REFRESH_TOKENS = 20
 
@@ -137,7 +138,7 @@ def enter_room():
 
 @main.route('/update_floor', methods=["GET"])
 def update_floor():
-    print("UPDATE_FLOOR REQUEST")
+    if dbg: print("UPDATE_FLOOR REQUEST")
 
     floor_num = request.args.get("floor")
     username = request.cookies.get("username")
@@ -161,7 +162,7 @@ def update_floor():
         "rooms": floor_rooms
     }
 
-    debug_func()
+    if dbg: debug_func()
     return json.dumps(content)
 
 
