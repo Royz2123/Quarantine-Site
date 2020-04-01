@@ -28,13 +28,32 @@
     z-index: 1;
  }
 
-.basic-grid {
+.meme-grid {
     display: grid;
     gap: 1rem;
     --squre-size: min(30vh, 20vw);
     grid-template-columns: repeat(auto-fill, minmax(var(--squre-size), 1fr));
     grid-auto-rows: var(--squre-size);
 
+ }
+
+ .video-grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: var(--nav-height);
+    --squre-size: 30vw;
+    grid-template-columns: repeat(auto-fill, minmax(var(--squre-size), 1fr));
+    grid-auto-rows: var(--squre-size);
+
+ }
+
+ .header {
+    font-size: 2.5vw;
+ }
+
+ .video-lmnt {
+    width: 28vw;
+    height: 21vw;
  }
 
  @keyframes cardEntrece{

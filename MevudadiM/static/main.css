@@ -26,6 +26,14 @@ ul {
 
 }
 
+
+.blog-post {
+    width: 60vw;
+    padding: 20px;
+    border-radius: 5vw;
+}
+
+
 body {
     font-family: "Alef Hebrew",
     "Helvetica Neue",

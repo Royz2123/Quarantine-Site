@@ -1,0 +1,24 @@
+{% extends "template.html" %}
+
+{% block title %}מחזור מ' האגדי - בלוג הישרדות{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/main.css">
+
+{% endblock %}
+
+{% block body %}
+<body dir='rtl'>
+<h2> הישרדות תחקירים </h2>
+<p> כל ההחלטות, המהלכים, הבריתות והבגידות לזכותו של אריאל</p>
+{% for episode in episodes %}
+<h3>והפעם... פרק {{episode.episodeNum}}</h3>
+
+{% for src in episode.srcs %}
+<img src={{src.source}} class="blog-post">
+{% endfor %}
+<br>
+{% endfor %}
+</body>
+
+{% endblock %}

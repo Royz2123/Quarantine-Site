@@ -2,6 +2,7 @@ from flask import Blueprint, request, render_template, make_response, redirect, 
 from apscheduler.schedulers.background import BackgroundScheduler
 
 import json
+import os
 
 import MevudadiM.zoom_user as zoom_user
 from MevudadiM.models import *
@@ -197,15 +198,18 @@ def participant_left():
     print("MEETING ID: ", meeting_id)
 
     # Search
-    possible_meetings = Rooms.query.filter(Rooms.meeting_id == meeting_id).first()
+    possible_meeting = Rooms.query.filter(Rooms.meeting_id == meeting_id).first()
 
-    if possible_meetings is not None:
+    if possible_meeting is not None:
         try:
             username = content["payload"]["object"]["participant"]["user_name"]
+
+            print(username)
+            print(possible_meeting.participants)
             # TODO: username to FIRST and LAST name
-            tmp = json.loads(possible_meetings[0].participants)
+            tmp = json.loads(possible_meeting.participants)
             tmp.remove(username)
-            possible_meetings[0].participants = json.dumps(tmp)
+            possible_meeting.participants = json.dumps(tmp)
         except Exception as e:
             print(e)
 
@@ -312,6 +316,17 @@ def get_memes():
     return render_template('memes.html', result=get_images())
 
 
+@main.route('/videos')
+def get_videos():
+    videos = [
+        ("https://drive.google.com/file/d/1qBWrofWpj33k9k0Yy72LePw-2bP_wbkQ/preview", "Ariel Shnitz"),
+        ("https://drive.google.com/file/d/1SiJoTd3Tx3Vblqs5G3rSAhF00If_q87q/preview", "Omer Prives"),
+        ("https://drive.google.com/file/d/1qEb2EorvLGoBNYGq_rzU1FnhYcOLHd-1/preview", "Lior Lederer"),
+        ("https://drive.google.com/file/d/1H9_iRmc7Q8bBOTFvNU21NAF8ExSI-UGy/preview", "Topaz Enbar"),
+    ]
+    return render_template('videos.html', result=videos)
+
+
 @main.route('/up', methods=['GET', 'POST'])
 def upload_file():
     import os
@@ -344,6 +359,46 @@ def upload_file():
         return redirect(url_for('main.get_memes'))
 
 
-@main.route('/videos')
-def get_videos():
-    return render_template('videos.html')
+def countDir(path):
+    files = folders = 0
+    for _, dirnames, filenames in os.walk(path):
+      # ^ this idiom means "we won't be using this value"
+        files += len(filenames)
+        folders += len(dirnames)
+    return folders,files
+
+
+
+@main.route('/blog')
+def blog():
+    print("BLOGGG", blogHelper())
+    return render_template('blog.html', episodes=blogHelper())
+    # srcs = [{'source':'statics/prosak/ep1/a.png'}
+    #        ,{'source':'statics/prosak/ep1/b.png'}]
+    # episodes = [{'episodeNum':1,'srcs':srcs}]
+    # return render_template('blog.html', episodes = episodes)
+
+def blogHelper():
+    num_of_episodes = countDir('./Mevudadim/static/prosak')[0]
+    print("EPISODES", num_of_episodes)
+    episodes = []
+    for i in range(1,num_of_episodes+1):
+        j = num_of_episodes+1-i
+        episodes.append({'episodeNum':(j),'srcs':srcsHelper(j)})
+    return episodes
+
+
+def srcsHelper(num):
+    numToWords = {1:'a',2:'b',3:'c',4:'d',5:'e',6:'f'}
+    srcs = []
+    num_of_srcs = countDir('./Mevudadim/static/prosak/ep'+str(num))[1]
+    for i in range(1,num_of_srcs+1):
+        srcs.append({'source':'static/prosak/ep'+str(num)+'/'+numToWords[i]+'.png'})
+    print(srcs)
+    return srcs
+# def blogHelper():
+
+
+@main.route('/blog/<string:blog_id>')
+def blogspot(blog_id):
+    return 'This is blog post number '+blog_id

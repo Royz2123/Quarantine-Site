@@ -17,7 +17,6 @@
         ); background-size: cover;"></button>
         <br><br><hr><br>
     <section class="basic-grid">
-
 	{% for item in result %}
     		<div class="card" id='{{ item[1] }}' style="background-image: url(
 		{{ url_for('main.get_image', pic=item[0]) }}
