@@ -12,7 +12,7 @@ MINUTES_BETWEEN_REFRESH_TOKENS = 1
 
 SERVICE_MEMES = "SERVICE_MEMES"
 
-HEROKU_AUTH = ""
+HEROKU_AUTH = "https://zoom.us/oauth/authorize?response_type=code&client_id=dHLRYFE5QhadcBZZLYMf6w&redirect_uri=https://mevudadim.herokuapp.com/"
 TEST_AUTH = "https://zoom.us/oauth/authorize?response_type=code&client_id=dHLRYFE5QhadcBZZLYMf6w&redirect_uri=http://5c3d600f.ngrok.io/"
 
 main = Blueprint("main", __name__)
@@ -97,7 +97,7 @@ def homepage():
             return resp
 
     debug_func()
-    return redirect(TEST_AUTH)
+    return redirect(HEROKU_AUTH)
 
 
 @main.route('/enter_room_first', methods=["POST"])
