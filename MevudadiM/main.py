@@ -12,6 +12,9 @@ MINUTES_BETWEEN_REFRESH_TOKENS = 1
 
 SERVICE_MEMES = "SERVICE_MEMES"
 
+HEROKU_AUTH = ""
+TEST_AUTH = "https://zoom.us/oauth/authorize?response_type=code&client_id=dHLRYFE5QhadcBZZLYMf6w&redirect_uri=http://5c3d600f.ngrok.io/"
+
 main = Blueprint("main", __name__)
 debug = Blueprint("debug", __name__)
 
@@ -57,7 +60,7 @@ def homepage():
                 new_user.account_info["last_name"],
             )
 
-            # delete all previous users with this code
+            # delete all previous users with this username
             Users.query.filter(Users.name == username).delete(synchronize_session="evaluate")
             db.session.commit()
 
@@ -94,11 +97,7 @@ def homepage():
             return resp
 
     debug_func()
-    resp = make_response(render_template(
-        'index.html',
-        greeting="LOG IN",
-    ))
-    return resp
+    return redirect(TEST_AUTH)
 
 
 @main.route('/enter_room_first', methods=["POST"])

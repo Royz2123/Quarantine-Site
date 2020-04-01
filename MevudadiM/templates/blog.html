@@ -2,6 +2,8 @@
 
 {% block title %}מחזור מ' האגדי - בלוג הישרדות{% endblock %}
 
+{% block header %}הישרדות תחקירים {% endblock %}
+
 {% block stylesheet %}
 <link rel="stylesheet" href="/static/main.css">
 
@@ -9,7 +11,6 @@
 
 {% block body %}
 <body dir='rtl'>
-<h2> הישרדות תחקירים </h2>
 <p> כל ההחלטות, המהלכים, הבריתות והבגידות לזכותו של אריאל</p>
 {% for episode in episodes %}
 <h3>והפעם... פרק {{episode.episodeNum}}</h3>

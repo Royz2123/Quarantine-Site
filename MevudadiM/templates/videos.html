@@ -1,13 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מימז</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/main.css') }}">
-    <script src="{{ url_for('static', filename='scripts/func.js') }}" defer></script>
-</head>
-<body dir="rtl">
+{% extends "template.html" %}
+
+{% block title %}מחזור מ' האגדי - סרטוני חדרים{% endblock %}
+
+{% block header %}סרטוני חדרים{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/main.css">
+<link rel="stylesheet" href="/static/styles/main.css">
+<script src="{{ url_for('static', filename='scripts/func.js') }}" defer></script>
+{% endblock %}
+
+{% block body %}
 
 <section class="video-grid">
     {% for item in result %}
@@ -45,3 +48,5 @@
 </section>
 </body>
 </html>
+
+{% endblock %}

@@ -1,6 +1,8 @@
 {% extends "template.html" %}
 
-{% block title %}מחזור מ' האגדי - דף הבית{% endblock %}
+{% block title %}מחזור מ' האגדי - מימז{% endblock %}
+
+{% block header %}מחזור meme{% endblock %}
 
 {% block stylesheet %}
 <link rel="stylesheet" href="/static/main.css">
@@ -10,13 +12,11 @@
 
 {% block body %}
     <br>
-    <hr>
-    <br>
     <button type="button" class="btn btn-info btn-circle btn-xl" data-toggle="modal" data-target="#exampleModal" style="background-image: url(
         {{ url_for('static', filename='icons/upload.webp') }}
         ); background-size: cover;"></button>
         <br><br><hr><br>
-    <section class="basic-grid">
+    <section class="meme-grid">
 	{% for item in result %}
     		<div class="card" id='{{ item[1] }}' style="background-image: url(
 		{{ url_for('main.get_image', pic=item[0]) }}

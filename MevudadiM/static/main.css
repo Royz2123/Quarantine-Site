@@ -38,8 +38,9 @@ body {
     font-family: "Alef Hebrew",
     "Helvetica Neue",
     Helvetica,
-    Arial,
-    sans-serif;
+    Arial ,
+    sans-serif !important;;
+    background: rgba(0,0,0,0.03) !important;
 }
 
 body * {

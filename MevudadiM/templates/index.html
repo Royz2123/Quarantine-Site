@@ -2,6 +2,8 @@
 
 {% block title %}מחזור מ' האגדי - דף הבית{% endblock %}
 
+{% block header %}דף הבית - זומתל"ם{% endblock %}
+
 {% block stylesheet %}
 <link rel="stylesheet" href="/static/main.css">{% endblock %}
 
@@ -246,7 +248,14 @@ function enterRoomFirst(roomId, roomTitle) {
             data = data.split("False").join("\"False\"");
             dData = data;
             let jsonData = JSON.parse(data);
-            window.open(jsonData["start_url"]);
+
+            console.log(jsonData);
+
+            if(jsonData.hasOwnProperty("code") && jsonData["code"] == 429) {
+                alert("השרתים של ZOOM עמוסים, לא להיבהל פשוט תיצרו את השיחה שוב");
+            } else {
+                window.open(jsonData["start_url"]);
+            }
         }
 
     );
@@ -575,7 +584,6 @@ let floorMappings = {
 </script>
 <br>
 <center><strong>
-    <h1>זומתל"ם</h1>
     <h2 id="map-title"></h2>
     <hr>
 </strong></center>
