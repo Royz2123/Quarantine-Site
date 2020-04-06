@@ -41,6 +41,20 @@ def admin_delete_room():
     return "Deleted Successfully!"
 
 
+@admin.route('/admin/' + admin_pass + '/delete_data', methods=["GET"])
+def admin_delete_data():
+    id_to_del = int(request.args.get("id"))
+    Data.query.filter(Data.id == id_to_del).delete(synchronize_session="evaluate")
+    db.session.commit()
+    return "Deleted Successfully!"
+
+
+@admin.route('/admin/' + admin_pass + '/view_data', methods=["GET"])
+def admin_view_data():
+    data = Data.query.all()
+    return str(data)
+
+
 @admin.route('/admin/' + admin_pass + '/view_users', methods=["GET"])
 def admin_view_users():
     users = Users.query.all()

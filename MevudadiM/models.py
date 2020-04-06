@@ -34,3 +34,6 @@ class Data(db.Model):
     text_data = db.Column(db.Text)
     binary_data = db.Column(db.LargeBinary)
     timestamp = db.Column(db.TIMESTAMP, default=datetime.datetime.now())
+
+    def __repr__(self):
+        return "DATA OBJ: id: %d, %s, %s, %s <br><br>\n" % (self.id, self.creator, self.service, str(self.timestamp))
