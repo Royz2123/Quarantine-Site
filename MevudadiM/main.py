@@ -47,7 +47,7 @@ def job_clean_up_rooms(app):
     print(dirty_rooms)
 
     with app.app_context():
-        for room in Rooms.query_all():
+        for room in Rooms.query.all():
             if not len(room.participants):
                 # If we've already seen this room
                 if room.meeting_id in dirty_rooms:
