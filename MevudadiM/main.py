@@ -10,6 +10,7 @@ from MevudadiM.models import *
 dbg = False
 
 MINUTES_BETWEEN_REFRESH_TOKENS = 20
+MINUTES_BETWEEN_ROOM_CLEANS = 1
 
 SERVICE_MEMES = "SERVICE_MEMES"
 
@@ -19,6 +20,8 @@ TEST_AUTH = "https://zoom.us/oauth/authorize?response_type=code&client_id=dHLRYF
 main = Blueprint("main", __name__)
 debug = Blueprint("debug", __name__)
 
+
+dirty_rooms = []
 
 @debug.route('/debug', methods=["GET"])
 def debug_func():
@@ -37,12 +40,36 @@ def job_refresh_tokens(app):
     print("refreshed_tokens!")
 
 
+def job_clean_up_rooms(app):
+    global dirty_rooms
+
+    print("\n\n\nUPDATING DIRTY ROOMS")
+    print(dirty_rooms)
+
+    with app.app_context():
+        for room in Rooms.query_all():
+            if not len(room.participants):
+                # If we've already seen this room
+                if room.meeting_id in dirty_rooms:
+                    Rooms.query.filter(Rooms.meeting_id == room.meeting_id).delete(synchronize_session="evaluate")
+                    db.session.commit()
+                    dirty_rooms.remove(room.meeting_id)
+                else:
+                    dirty_rooms.append(room.meeting_id)
+
+    print(dirty_rooms)
+
+
+
+
+
 @main.before_app_first_request
 def initialize_app():
     apsched = BackgroundScheduler()
     apsched.start()
 
     apsched.add_job(job_refresh_tokens, 'interval', args=[current_app._get_current_object()], minutes=MINUTES_BETWEEN_REFRESH_TOKENS)
+    apsched.add_job(job_clean_up_rooms, 'interval', args=[current_app._get_current_object()], minutes=MINUTES_BETWEEN_ROOM_CLEANS)
 
 @main.route('/', methods=["GET"])
 def homepage():
