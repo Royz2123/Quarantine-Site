@@ -19,11 +19,74 @@ TEST_AUTH = "https://zoom.us/oauth/authorize?response_type=code&client_id=dHLRYF
 
 main = Blueprint("main", __name__)
 debug = Blueprint("debug", __name__)
+admin = Blueprint("admin", __name__)
 
+admin_pass = "vjfbv428hgwobv"
+
+
+# Admin Stuff
+@admin.route('/admin/' + admin_pass + '/delete_user', methods=["GET"])
+def admin_delete_user():
+    id_to_del = int(request.args.get("id"))
+    Users.query.filter(Users.id == id_to_del).delete(synchronize_session="evaluate")
+    db.session.commit()
+    return "Deleted Successfully!"
+
+
+@admin.route('/admin/' + admin_pass + '/delete_room', methods=["GET"])
+def admin_delete_room():
+    id_to_del = int(request.args.get("id"))
+    Rooms.query.filter(Rooms.id == id_to_del).delete(synchronize_session="evaluate")
+    db.session.commit()
+    return "Deleted Successfully!"
+
+
+@admin.route('/admin/' + admin_pass + '/view_users', methods=["GET"])
+def admin_view_users():
+    users = Users.query.all()
+    return str(users)
 
 dirty_rooms = []
 
-@debug.route('/debug', methods=["GET"])
+
+@admin.route('/admin/' + admin_pass +'/view_rooms', methods=["GET"])
+def admin_view_rooms():
+    rooms = Rooms.query.all()
+    return str(rooms)
+
+
+@admin.route('/admin/debug_drop_db', methods=["GET"])
+def debug_drop_db():
+    db.drop_all()
+    return "Finished"
+
+
+@admin.route('/admin/debug_create_db', methods=["GET"])
+def debug_create_db():
+    db.drop_all()
+    db.create_all()
+    return "Finished"
+
+
+@admin.route('/admin/debug_add_user', methods=["GET"])
+def debug_add_user():
+    u = Users(name="Asaf", access_token="Blabla", refresh_token="Bla Bla")
+
+    db.session.add(u)
+    db.session.commit()
+    return "Finished"
+
+
+@admin.route('/admin/debug_add_room', methods=["GET"])
+def debug_add_room():
+    r = Rooms(room_name="rr", floor=2, meeting_name="mm", participants="Blablabla", join_url="http://urlfine")
+
+    db.session.add(r)
+    db.session.commit()
+    return "Finished"
+
+
+@admin.route('/admin/debug', methods=["GET"])
 def debug_func():
     print("Users: ", Users.query.all(), "\n")
     print("Rooms: ", Rooms.query.all(), "\n")
@@ -70,6 +133,7 @@ def initialize_app():
 
     apsched.add_job(job_refresh_tokens, 'interval', args=[current_app._get_current_object()], minutes=MINUTES_BETWEEN_REFRESH_TOKENS)
     apsched.add_job(job_clean_up_rooms, 'interval', args=[current_app._get_current_object()], minutes=MINUTES_BETWEEN_ROOM_CLEANS)
+
 
 @main.route('/', methods=["GET"])
 def homepage():
@@ -273,38 +337,7 @@ def change_door_state():
     db.session.commit()
     return "Finished"
 
-# Debug Stuff
 
-
-@debug.route('/debug_drop_db', methods=["GET"])
-def debug_drop_db():
-    db.drop_all()
-    return "Finished"
-
-
-@debug.route('/debug_create_db', methods=["GET"])
-def debug_create_db():
-    db.drop_all()
-    db.create_all()
-    return "Finished"
-
-
-@debug.route('/debug_add_user', methods=["GET"])
-def debug_add_user():
-    u = Users(name="Asaf", access_token="Blabla", refresh_token="Bla Bla")
-
-    db.session.add(u)
-    db.session.commit()
-    return "Finished"
-
-
-@debug.route('/debug_add_room', methods=["GET"])
-def debug_add_room():
-    r = Rooms(room_name="rr", floor=2, meeting_name="mm", participants="Blablabla", join_url="http://urlfine")
-
-    db.session.add(r)
-    db.session.commit()
-    return "Finished"
 
 # Marketplace stuff
 
