@@ -389,6 +389,18 @@ def get_image():
 def get_memes():
     return render_template('memes.html', result=get_images())
 
+@main.route('/cyber')
+def get_cyber():
+    return render_template('cyber.html')
+
+@main.route('/this_is_my_final_form')
+def final_form():
+    return render_template('final_form.html')
+
+@main.route('/darkMatlam')
+def get_darkMatlam():
+    return render_template('darkMatlam.html')
+
 
 @main.route('/videos')
 def get_videos():

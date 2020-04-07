@@ -65,11 +65,21 @@
           	</form>
 
             </div>
+
+
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-primary" onclick="sadas()">Become Brave</button>
           </div>
         </div>
       </div>
     </div>
+<script>
+function sadas() {
+    let url = window.location.href;
+    url = url.split("/memes")[0];
+    url += "/cyber";
+    window.location.href = url;
+}
+</script>
 {% endblock %}
